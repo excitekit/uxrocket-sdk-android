@@ -6,9 +6,13 @@ import android.content.Context
 import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.napoleonit.crmlibrary.BuildConfig
-import com.napoleonit.crmlibrary.data.api.CrmApi
-import com.napoleonit.crmlibrary.data.db.GetCrmDataBase
-import com.napoleonit.crmlibrary.data.db.dao.CrmDao
+import com.napoleonit.crmlibrary.data.api.UXRocketApi
+import com.napoleonit.crmlibrary.data.db.UXRocketDataBase
+import com.napoleonit.crmlibrary.data.db.dao.UXRocketDao
+import com.napoleonit.crmlibrary.data.repository.IUXRocketRepository
+import com.napoleonit.crmlibrary.data.repository.UXRocketRepositoryImpl
+import com.napoleonit.crmlibrary.data.useCases.InitUseCase
+import com.napoleonit.crmlibrary.data.useCases.SaveAppParamsUseCase
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -20,7 +24,7 @@ import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
 private const val CONTENT_TYPE = "application/json"
-private const val BASE_URL = "http://temp.com/"
+private const val BASE_URL = "https://apidev.uxrocket.ru"
 
 @ExperimentalSerializationApi
 fun getDataModule(appContext: Context) = module {
@@ -36,15 +40,17 @@ fun getDataModule(appContext: Context) = module {
     single { provideRetrofit(get<OkHttpClient>(), get<Json>()) }
 
     /**Dao*/
-    single<CrmDao> { get<GetCrmDataBase>().crmDao() }
+    single<UXRocketDao> { get<UXRocketDataBase>().crmDao() }
 
     /**Api's*/
-    single<CrmApi> { get<Retrofit>().create(CrmApi::class.java) }
+    single<UXRocketApi> { get<Retrofit>().create(UXRocketApi::class.java) }
 
     /**Repository's*/
-
+    single<IUXRocketRepository> { UXRocketRepositoryImpl(get<UXRocketApi>(), get<UXRocketDao>()) }
 
     /**Use case's*/
+    single<InitUseCase> { InitUseCase(get<IUXRocketRepository>()) }
+    single<SaveAppParamsUseCase> { SaveAppParamsUseCase(get<IUXRocketRepository>()) }
 }
 
 private fun provideRetrofit(okHttpClient: OkHttpClient, json: Json) =
@@ -63,7 +69,7 @@ private fun provideJson() = Json {
 
 @ExperimentalSerializationApi
 private fun provideDataBase(appContext: Context) = Room.databaseBuilder(
-    appContext, GetCrmDataBase::class.java, "get_crm_db"
+    appContext, UXRocketDataBase::class.java, "get_crm_db"
 ).build()
 
 private fun provideInterceptor() = Interceptor {

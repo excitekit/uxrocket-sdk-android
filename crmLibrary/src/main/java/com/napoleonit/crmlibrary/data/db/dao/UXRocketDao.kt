@@ -4,16 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.napoleonit.crmlibrary.data.models.CrmMetaDataEntity
+import com.napoleonit.crmlibrary.data.models.UXRocketMetaDataEntity
 
 @Dao
-interface CrmDao {
+interface UXRocketDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: CrmMetaDataEntity)
+    suspend fun insert(entity: UXRocketMetaDataEntity)
 
     @Query("DELETE FROM crm_meta_data")
     suspend fun delete()
 
     @Query("SELECT * FROM crm_meta_data")
-    suspend fun getEntity(): List<CrmMetaDataEntity>
+    suspend fun getEntity(): List<UXRocketMetaDataEntity>
 }

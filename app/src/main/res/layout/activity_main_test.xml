@@ -7,14 +7,16 @@
     tools:context=".MainTestActivity">
 
 
-    <TextView
+    <Button
+        android:id="@+id/save_app_params_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello world!"
+        android:text="Save app raw params!"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

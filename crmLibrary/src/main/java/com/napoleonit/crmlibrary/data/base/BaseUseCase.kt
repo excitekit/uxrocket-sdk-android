@@ -1,6 +1,6 @@
 package com.napoleonit.crmlibrary.data.base
 
-import com.napoleonit.crmlibrary.data.network.BaseCRMApiException
+import com.napoleonit.crmlibrary.data.network.BaseUXRocketApiException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -26,9 +26,9 @@ abstract class UseCase<out Type, in Params> where Type : Any? {
                     if (it is HttpException) {
                         val okHttpResponse = it.response()
                         val exception = when (okHttpResponse?.code()) {
-                            BaseCRMApiException.API_KEY_NOT_FOUND -> BaseCRMApiException.ApiKeyNotFound
-                            BaseCRMApiException.UNAUTHORIZED -> BaseCRMApiException.Unauthorized
-                            BaseCRMApiException.FAILED_TO_SAVE_DATA_TO_QUEUE -> BaseCRMApiException.FailedToSaveQueue
+                            BaseUXRocketApiException.API_KEY_NOT_FOUND -> BaseUXRocketApiException.ApiKeyNotFound
+                            BaseUXRocketApiException.UNAUTHORIZED -> BaseUXRocketApiException.Unauthorized
+                            BaseUXRocketApiException.FAILED_TO_SAVE_DATA_TO_QUEUE -> BaseUXRocketApiException.FailedToSaveQueue
                             else -> it
                         }
                         onFailure(exception)
