@@ -16,7 +16,7 @@ class App : Application() {
         //SDK INITIALIZATION SAMPLE
         UXRocket.configure(
             appContext = applicationContext,
-            authKey = "D3OLWCEXR4",
+            authKey = "2JIJ67L7CS",
             appRocketId = "test_android_sdk_uxrocket"
         )
         UXRocket.setCountryAndCity("Armenia", "Yerevan")

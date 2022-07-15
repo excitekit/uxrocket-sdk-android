@@ -7,6 +7,7 @@
 
 
     <Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
@@ -20,5 +21,15 @@
             android:textSize="24sp"
             android:textStyle="bold" />
     </Toolbar>
+
+    <Button
+        android:id="@+id/search_by_name"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="200dp"
+        android:text="search by name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
