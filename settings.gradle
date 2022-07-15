@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "GetCRMAndroid"
 include ':app'
-include ':crmLibrary'
+include ':uxRocketLibrary'

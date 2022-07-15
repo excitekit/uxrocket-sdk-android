@@ -1,8 +1,7 @@
 package com.napoleonit.getcrmandroid
 
 import android.app.Application
-import android.os.Build
-import com.napoleonit.crmlibrary.UXRocket
+import com.napoleonit.uxrocket.UXRocket
 
 class App : Application() {
     companion object {
@@ -13,11 +12,14 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        UXRocket.init(
+
+        //SDK INITIALIZATION SAMPLE
+        UXRocket.configure(
             appContext = applicationContext,
             authKey = "D3OLWCEXR4",
-            deviceModelName = Build.MODEL,
             appRocketId = "test_android_sdk_uxrocket"
         )
+        UXRocket.setCountryAndCity("Armenia", "Yerevan")
+        UXRocket.debugModel(isEnabled = true)
     }
 }
