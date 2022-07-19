@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit
 private const val CONTENT_TYPE = "application/json"
 private const val BASE_URL = "https://apidev.uxrocket.ru/"
 
-@ExperimentalSerializationApi
 fun getDataModule(appContext: Context, authKey: String, appRocketId: String) = module {
     /**Base component's*/
     single { provideJson() }
@@ -66,7 +65,6 @@ fun provideCachingParams(): IParamsRepository =
 
 fun provideMetaInfo(appContext: Context, authKey: String, appRocketId: String): IMetaInfo = MetaInfo(appContext, authKey, appRocketId)
 
-@ExperimentalSerializationApi
 private fun provideRetrofit(okHttpClient: OkHttpClient, json: Json) =
     Retrofit.Builder()
         .client(okHttpClient)
@@ -81,7 +79,6 @@ private fun provideJson() = Json {
     ignoreUnknownKeys = true
 }
 
-@ExperimentalSerializationApi
 private fun provideDataBase(appContext: Context) = Room.databaseBuilder(
     appContext, UXRocketDataBase::class.java, "get_crm_db"
 ).build()

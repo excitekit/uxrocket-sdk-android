@@ -11,17 +11,17 @@ import com.napoleonit.getcrmandroid.fragments.HomeFragment
 import com.napoleonit.getcrmandroid.fragments.SearchFragment
 import com.napoleonit.uxrocket.UXRocket
 import com.napoleonit.uxrocket.data.models.http.ContextEvent
-import com.napoleonit.uxrocket.data.models.local.LogModel
 
 class MainTestActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainTestBinding
-    private var currentSelectedMenu = Menus.HOME
+    private var currentSelectedMenu = Menus.NON
 
     enum class Menus {
         HOME,
         SEARCH,
-        FAVORITES
+        FAVORITES,
+        NON
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +42,9 @@ class MainTestActivity : AppCompatActivity() {
                         openFragment(HomeFragment.getInstance())
 
                         UXRocket.logEvent(
-                            LogModel(
-                                item = "nav_home_button",
-                                itemName = "Nav home button pressed",
-                                event = ContextEvent.MAIN_MENU
-                            )
+                            itemIdentificator = "nav_home_button",
+                            itemName = "Nav home button pressed",
+                            event = ContextEvent.MAIN_MENU
                         )
                     }
                 }
@@ -56,11 +54,9 @@ class MainTestActivity : AppCompatActivity() {
                         openFragment(SearchFragment.getInstance())
 
                         UXRocket.logEvent(
-                            LogModel(
-                                item = "nav_search_button",
-                                itemName = "Nav search button pressed",
-                                event = ContextEvent.MAIN_MENU
-                            )
+                            itemIdentificator = "nav_search_button",
+                            itemName = "Nav search button pressed",
+                            event = ContextEvent.MAIN_MENU
                         )
                     }
                 }
@@ -70,11 +66,9 @@ class MainTestActivity : AppCompatActivity() {
                         openFragment(FavoriteMenuFragment.getInstance())
 
                         UXRocket.logEvent(
-                            LogModel(
-                                item = "nav_favorite_button",
-                                itemName = "Nav favorite button pressed",
-                                event = ContextEvent.MAIN_MENU
-                            )
+                            itemIdentificator = "nav_favorite_button",
+                            itemName = "Nav favorite button pressed",
+                            event = ContextEvent.MAIN_MENU
                         )
                     }
                 }

@@ -26,7 +26,7 @@ data class SaveRawAppParamsRequestModel(
     @SerialName("city") val city: String? = null,
     @SerialName("country") val country: String? = null,
     @SerialName("event_context") val eventContext: ContextEvent? = null,
-    @SerialName("params") val params: List<ParamRequestModel>? = null
+    @SerialName("params") val params: List<AttributeParameter>? = null
 ) {
     companion object {
         fun bindModel(model: LogModel,metaInfo: IMetaInfo) = SaveRawAppParamsRequestModel(
@@ -48,10 +48,18 @@ data class SaveRawAppParamsRequestModel(
             item = model.item,
             itemName = model.itemName,
             captureDt = model.capturedDate,
-            eventContext = model.event
+            eventContext = model.event,
+            params = model.params
         )
     }
 }
+
+@Serializable
+class AttributeParameter(
+    @SerialName("id") val id: String,
+    @SerialName("value") val value: String
+)
+
 
 @Serializable
 enum class ContextEvent {
@@ -80,9 +88,3 @@ enum class ContextEvent {
         return this.name.lowercase()
     }
 }
-
-@Serializable
-data class ParamRequestModel(
-    @SerialName("id") val id: Long,
-    @SerialName("value") val value: String
-)
