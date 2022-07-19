@@ -1,7 +1,5 @@
 package com.napoleonit.uxrocket.data.exceptions
 
-import com.napoleonit.uxrocket.shared.UXRocketConstants.NAME_SDK
-
 sealed class BaseUXRocketApiException(message: String) : Exception(message) {
     companion object {
         const val API_KEY_NOT_FOUND = 400
