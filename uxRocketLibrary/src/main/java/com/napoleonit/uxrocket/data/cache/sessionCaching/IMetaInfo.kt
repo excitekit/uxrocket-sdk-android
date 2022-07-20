@@ -1,4 +1,4 @@
-package com.napoleonit.uxrocket.data.sessionCaching
+package com.napoleonit.uxrocket.data.cache.sessionCaching
 
 
 interface IMetaInfo {
@@ -13,6 +13,7 @@ interface IMetaInfo {
     val deviceModelName: String
     val deviceType: String
     val resolution: String
+    val visitor: String
 
     var country: String?
     var city: String?

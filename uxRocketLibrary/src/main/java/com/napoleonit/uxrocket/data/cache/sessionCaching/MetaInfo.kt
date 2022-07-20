@@ -1,4 +1,4 @@
-package com.napoleonit.uxrocket.data.sessionCaching
+package com.napoleonit.uxrocket.data.cache.sessionCaching
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,6 +10,8 @@ import java.util.*
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.WindowManager
+import java.math.BigInteger
+import java.security.MessageDigest
 
 class MetaInfo(
     appContext: Context,
@@ -25,6 +27,7 @@ class MetaInfo(
     override val appPackageName: String = getPackageName(appContext)
     override val appVersionName: String = getAppVersionName(appContext)
     override val deviceModelName: String = getDeviceName()
+    override val visitor: String get() = convertDeviceIdToMD5(deviceID)
 
     /**
      * Оптиональные параметры
@@ -78,4 +81,9 @@ private fun getScreenResolution(context: Context): String {
     val width = metrics.widthPixels
     val height = metrics.heightPixels
     return width.toString() + "x" + height.toString()
+}
+
+private fun convertDeviceIdToMD5(deviceId: String): String {
+    val md = MessageDigest.getInstance("MD5")
+    return BigInteger(1, md.digest(deviceId.toByteArray())).toString(16).padStart(32, '0')
 }

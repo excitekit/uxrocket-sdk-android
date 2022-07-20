@@ -1,19 +1,22 @@
 package com.napoleonit.uxrocket.di
 
 import android.content.Context
-import androidx.room.Room
+import android.content.SharedPreferences
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.napoleonit.uxrocket.data.api.UXRocketApi
-import com.napoleonit.uxrocket.data.db.UXRocketDataBase
+import com.napoleonit.uxrocket.data.cache.globalCaching.ITaskCaching
+import com.napoleonit.uxrocket.data.cache.globalCaching.TaskCachingImpl
 import com.napoleonit.uxrocket.data.repository.uxRocketRepository.IUXRocketRepository
 import com.napoleonit.uxrocket.data.repository.uxRocketRepository.UXRocketRepositoryImpl
 import com.napoleonit.uxrocket.data.repository.paramsRepository.ParamsRepositoryImpl
 import com.napoleonit.uxrocket.data.repository.paramsRepository.IParamsRepository
-import com.napoleonit.uxrocket.data.sessionCaching.IMetaInfo
-import com.napoleonit.uxrocket.data.sessionCaching.MetaInfo
+import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.data.cache.sessionCaching.MetaInfo
 import com.napoleonit.uxrocket.data.useCases.SaveAppParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetParamsUseCase
+import com.napoleonit.uxrocket.data.useCases.SaveAppParamsFromCacheUseCase
+import com.napoleonit.uxrocket.shared.NetworkState
 import com.napoleonit.uxrocket.shared.UXRocketServer
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -26,16 +29,21 @@ import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
 private const val CONTENT_TYPE = "application/json"
+private const val TASK_PREFERENCE = "TaskPreference"
 
 fun getDataModule(appContext: Context, authKey: String, appRocketId: String, serverEnvironment: UXRocketServer) = module {
     /**Base component's*/
     single { provideJson() }
 
-    //single { provideDataBase(appContext) }
+    single { providePreference(appContext) }
+
+    single { provideTaskCaching(get(), get()) }
 
     single { provideCachingParams() }
 
     single { provideMetaInfo(appContext, authKey, appRocketId) }
+
+    single { provideNetworkState(appContext) }
 
     single { provideInterceptor() }
 
@@ -54,12 +62,22 @@ fun getDataModule(appContext: Context, authKey: String, appRocketId: String, ser
 
     /**Use case's*/
     single { SaveAppParamsUseCase(get(), get()) }
+    single { SaveAppParamsFromCacheUseCase(get(), get()) }
     single { CachingParamsUseCase(get()) }
     single { GetParamsUseCase(get()) }
 }
 
+fun provideNetworkState(appContext: Context) = NetworkState(appContext)
+
 fun provideCachingParams(): IParamsRepository =
     ParamsRepositoryImpl()
+
+fun provideTaskCaching(sharedPreferences: SharedPreferences, json: Json): ITaskCaching =
+    TaskCachingImpl(sharedPreferences, json)
+
+fun providePreference(appContext: Context): SharedPreferences {
+    return appContext.getSharedPreferences(TASK_PREFERENCE, Context.MODE_PRIVATE)
+}
 
 fun provideMetaInfo(appContext: Context, authKey: String, appRocketId: String): IMetaInfo = MetaInfo(appContext, authKey, appRocketId)
 
@@ -76,10 +94,6 @@ private fun provideJson() = Json {
     coerceInputValues = true
     ignoreUnknownKeys = true
 }
-
-private fun provideDataBase(appContext: Context) = Room.databaseBuilder(
-    appContext, UXRocketDataBase::class.java, "get_crm_db"
-).build()
 
 private fun provideInterceptor() = Interceptor {
     val request = it.request()

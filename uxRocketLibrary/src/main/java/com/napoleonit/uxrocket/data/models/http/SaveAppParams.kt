@@ -1,7 +1,7 @@
 package com.napoleonit.uxrocket.data.models.http
 
 import com.napoleonit.uxrocket.data.models.local.LogModel
-import com.napoleonit.uxrocket.data.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

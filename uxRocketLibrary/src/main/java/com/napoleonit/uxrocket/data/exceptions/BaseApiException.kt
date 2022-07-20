@@ -10,6 +10,7 @@ sealed class BaseUXRocketApiException(message: String) : Exception(message) {
     object ApiKeyNotFound : BaseUXRocketApiException("API key not found")
     object Unauthorized : BaseUXRocketApiException("Unauthorized")
     object FailedToSaveQueue : BaseUXRocketApiException("Failed to save queue")
+    object NoInternetConnection : BaseUXRocketApiException("No internet connection")
 }
 
 

@@ -27,6 +27,11 @@ class App : Application() {
         UXRocket.debugModel(isEnabled = true)
 
         //SETTER DEFAULTS PARAMS SAMPLE
-        //UXRocket.setDefaultsParams(listOf(AttributeParameter("2", "Красный")))
+        UXRocket.setDefaultsParams(
+            listOf(
+                AttributeParameter("2", "Красный"),
+                AttributeParameter("3", "Черный")
+            )
+        )
     }
 }

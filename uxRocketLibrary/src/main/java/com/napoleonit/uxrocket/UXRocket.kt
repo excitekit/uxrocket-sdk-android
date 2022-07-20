@@ -1,17 +1,18 @@
 package com.napoleonit.uxrocket
 
 import android.content.Context
+import com.napoleonit.uxrocket.data.cache.globalCaching.ITaskCaching
 import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
 import com.napoleonit.uxrocket.data.models.http.AttributeParameter
 import com.napoleonit.uxrocket.data.models.http.ContextEvent
-import com.napoleonit.uxrocket.data.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetParamsUseCase
+import com.napoleonit.uxrocket.data.useCases.SaveAppParamsFromCacheUseCase
 import com.napoleonit.uxrocket.data.useCases.SaveAppParamsUseCase
 import com.napoleonit.uxrocket.di.DI
 import com.napoleonit.uxrocket.shared.UXRocketServer
-import com.napoleonit.uxrocket.shared.execute
 import com.napoleonit.uxrocket.shared.logError
 import com.napoleonit.uxrocket.shared.logInfo
 import kotlinx.coroutines.*
@@ -48,27 +49,36 @@ object UXRocket {
         event: ContextEvent,
         parameters: List<AttributeParameter>? = null
     ) {
-        val useCase: SaveAppParamsUseCase by inject(SaveAppParamsUseCase::class.java)
-        CoroutineScope(Dispatchers.IO).execute(block = {
-            useCase(
-                params = LogModel(
-                    item = itemIdentificator,
-                    itemName = itemName,
-                    event = event,
-                    params = parameters ?: getFromCache(this)
-                ),
+        val saveAppParamsUseCase: SaveAppParamsUseCase by inject(SaveAppParamsUseCase::class.java)
+        val saveAppParamsFromCacheUseCase: SaveAppParamsFromCacheUseCase by inject(SaveAppParamsFromCacheUseCase::class.java)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            //Сперва отправляем логи которые при запросе возникли ошибки.
+            saveAppParamsFromCacheUseCase(Unit)
+
+            //После чего отправляем текущий лог
+            val currentLogModel = LogModel(itemIdentificator, itemName, event, parameters ?: getFromCache(this))
+            saveAppParamsUseCase(
+                params = currentLogModel,
                 onSuccess = {
                     "Params saved".logInfo()
                 },
                 onFailure = {
-                    if (it is BaseUXRocketApiException) when (it) {
-                        BaseUXRocketApiException.ApiKeyNotFound -> "Save app Params failed: ${it.message}".logError()
-                        BaseUXRocketApiException.FailedToSaveQueue -> "Save app Params failed: ${it.message}".logError()
-                        BaseUXRocketApiException.Unauthorized -> "Save app Params failed: ${it.message}".logError()
+                    "Save app Params failed: ${it.message}".logError()
+                    when (it) {
+
+                        // Проверяем причину сбоя, если причина один из нижних приведенных exception-ов
+                        // кэшируем запрос
+
+                        BaseUXRocketApiException.FailedToSaveQueue,
+                        BaseUXRocketApiException.NoInternetConnection -> {
+                            val taskCaching: ITaskCaching by inject(ITaskCaching::class.java)
+                            taskCaching.addLogEventTaskToQueue(currentLogModel)
+                        }
                     }
                 }
             )
-        })
+        }
     }
 
     @ExperimentalCoroutinesApi
@@ -93,13 +103,13 @@ object UXRocket {
      */
     fun setDefaultsParams(params: List<AttributeParameter>) {
         val useCase: CachingParamsUseCase by inject(CachingParamsUseCase::class.java)
-        CoroutineScope(Dispatchers.IO).execute(block = {
+        CoroutineScope(Dispatchers.IO).launch {
             useCase(
                 params = params,
                 onSuccess = {
                     "Params saved".logInfo()
                 }
             )
-        })
+        }
     }
 }

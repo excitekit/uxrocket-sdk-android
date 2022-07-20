@@ -8,13 +8,3 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.coroutines.CoroutineContext
-
-fun CoroutineScope.execute(
-    block: suspend CoroutineScope.() -> Unit,
-    coroutineScope: CoroutineContext = Dispatchers.IO
-) = SupervisorJob(launch(coroutineScope) {
-    if (!UXRocket.isInitialized) throw UXRocketNotInitializedException()
-    else {
-        block()
-    }
-})

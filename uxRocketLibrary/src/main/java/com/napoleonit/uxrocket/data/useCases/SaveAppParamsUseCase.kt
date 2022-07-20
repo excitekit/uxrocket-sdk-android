@@ -7,7 +7,7 @@ import com.napoleonit.uxrocket.data.base.UseCase
 import com.napoleonit.uxrocket.data.models.http.SaveRawAppParamsRequestModel
 import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.data.repository.uxRocketRepository.IUXRocketRepository
-import com.napoleonit.uxrocket.data.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 
 class SaveAppParamsUseCase(private val repository: IUXRocketRepository, private val metaInfo: IMetaInfo) : UseCase<Unit, LogModel>() {
     override suspend fun run(params: LogModel): Either<Exception, Unit> {
