@@ -15,7 +15,6 @@ import com.napoleonit.uxrocket.data.cache.sessionCaching.MetaInfo
 import com.napoleonit.uxrocket.data.useCases.SaveAppParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetParamsUseCase
-import com.napoleonit.uxrocket.data.useCases.SaveAppParamsFromCacheUseCase
 import com.napoleonit.uxrocket.shared.NetworkState
 import com.napoleonit.uxrocket.shared.UXRocketServer
 import kotlinx.serialization.json.Json
@@ -61,8 +60,7 @@ fun getDataModule(appContext: Context, authKey: String, appRocketId: String, ser
     single<IUXRocketRepository> { UXRocketRepositoryImpl(get()) }
 
     /**Use case's*/
-    single { SaveAppParamsUseCase(get(), get()) }
-    single { SaveAppParamsFromCacheUseCase(get(), get()) }
+    single { SaveAppParamsUseCase(get(), get(), get()) }
     single { CachingParamsUseCase(get()) }
     single { GetParamsUseCase(get()) }
 }

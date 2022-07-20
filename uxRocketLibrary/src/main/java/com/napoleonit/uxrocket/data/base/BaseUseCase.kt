@@ -19,19 +19,22 @@ abstract class UseCase<out Type, in Params> where Type : Any? {
      */
     abstract suspend fun run(params: Params): Either<Exception, Type>
 
-    protected val networkState: NetworkState by inject(NetworkState::class.java)
+    private val networkState: NetworkState by inject(NetworkState::class.java)
 
     suspend operator fun invoke(
-        params: Params, onSuccess: suspend (Type) -> Unit = {},
+        params: Params,
+        onSuccess: suspend (Type) -> Unit = {},
         onFailure: suspend (Exception) -> Unit = {},
     ) {
         if (!UXRocket.isInitialized) throw UXRocketNotInitializedException()
-        else if (networkState.isOnline()) {
+        else {
             val result = run(params)
             withContext(Dispatchers.IO) {
                 result.fold(
                     failed = {
-                        if (it is HttpException) {
+                        if (!networkState.isOnline())
+                            onFailure(BaseUXRocketApiException.NoInternetConnection)
+                        else if (it is HttpException) {
                             val okHttpResponse = it.response()
                             val exception = when (okHttpResponse?.code()) {
                                 BaseUXRocketApiException.API_KEY_NOT_FOUND -> BaseUXRocketApiException.ApiKeyNotFound
@@ -47,7 +50,6 @@ abstract class UseCase<out Type, in Params> where Type : Any? {
                     succeeded = { onSuccess(it) }
                 )
             }
-
-        } else onFailure(BaseUXRocketApiException.NoInternetConnection)
+        }
     }
 }

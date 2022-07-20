@@ -17,7 +17,7 @@ class TaskCachingImpl(
     }
 
     override val logEventTaskList: List<LogModel>
-        get() {
+        @Synchronized get() {
             val dataJson = sharedPreferences.getString(LOG_EVENT_TASK_LIST, "")
             return if (dataJson.isNullOrEmpty()) {
                 emptyList()

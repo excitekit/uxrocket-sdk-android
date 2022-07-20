@@ -9,7 +9,6 @@ import com.napoleonit.uxrocket.data.models.http.ContextEvent
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetParamsUseCase
-import com.napoleonit.uxrocket.data.useCases.SaveAppParamsFromCacheUseCase
 import com.napoleonit.uxrocket.data.useCases.SaveAppParamsUseCase
 import com.napoleonit.uxrocket.di.DI
 import com.napoleonit.uxrocket.shared.UXRocketServer
@@ -50,32 +49,26 @@ object UXRocket {
         parameters: List<AttributeParameter>? = null
     ) {
         val saveAppParamsUseCase: SaveAppParamsUseCase by inject(SaveAppParamsUseCase::class.java)
-        val saveAppParamsFromCacheUseCase: SaveAppParamsFromCacheUseCase by inject(SaveAppParamsFromCacheUseCase::class.java)
-
         CoroutineScope(Dispatchers.IO).launch {
-            //Сперва отправляем логи которые при запросе возникли ошибки.
-            saveAppParamsFromCacheUseCase(Unit)
-
-            //После чего отправляем текущий лог
-            val currentLogModel = LogModel(itemIdentificator, itemName, event, parameters ?: getFromCache(this))
+            val logModel = LogModel(itemIdentificator, itemName, event, parameters ?: getFromCache(this))
             saveAppParamsUseCase(
-                params = currentLogModel,
+                params = logModel,
                 onSuccess = {
                     "Params saved".logInfo()
                 },
                 onFailure = {
                     "Save app Params failed: ${it.message}".logError()
-                    when (it) {
 
+                    when (it) {
                         // Проверяем причину сбоя, если причина один из нижних приведенных exception-ов
                         // кэшируем запрос
-
                         BaseUXRocketApiException.FailedToSaveQueue,
                         BaseUXRocketApiException.NoInternetConnection -> {
-                            val taskCaching: ITaskCaching by inject(ITaskCaching::class.java)
-                            taskCaching.addLogEventTaskToQueue(currentLogModel)
+                            val taskCaching by inject<ITaskCaching>(ITaskCaching::class.java)
+                            taskCaching.addLogEventTaskToQueue(logModel)
                         }
                     }
+
                 }
             )
         }
