@@ -14,6 +14,7 @@ import com.napoleonit.uxrocket.data.sessionCaching.MetaInfo
 import com.napoleonit.uxrocket.data.useCases.SaveAppParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetParamsUseCase
+import com.napoleonit.uxrocket.shared.UXRocketServer
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -25,13 +26,12 @@ import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
 private const val CONTENT_TYPE = "application/json"
-private const val BASE_URL = "https://apidev.uxrocket.ru/"
 
-fun getDataModule(appContext: Context, authKey: String, appRocketId: String) = module {
+fun getDataModule(appContext: Context, authKey: String, appRocketId: String, serverEnvironment: UXRocketServer) = module {
     /**Base component's*/
     single { provideJson() }
 
-   //single { provideDataBase(appContext) }
+    //single { provideDataBase(appContext) }
 
     single { provideCachingParams() }
 
@@ -41,10 +41,10 @@ fun getDataModule(appContext: Context, authKey: String, appRocketId: String) = m
 
     single { provideOkHttp(get()) }
 
-    single { provideRetrofit(get(), get()) }
+    single { provideRetrofit(get(), get(), serverEnvironment) }
 
-   // /**Dao*/
-   // single { get<UXRocketDataBase>().crmDao() }
+    // /**Dao*/
+    // single { get<UXRocketDataBase>().crmDao() }
 
     /**Api's*/
     single<UXRocketApi> { get<Retrofit>().create(UXRocketApi::class.java) }
@@ -63,10 +63,10 @@ fun provideCachingParams(): IParamsRepository =
 
 fun provideMetaInfo(appContext: Context, authKey: String, appRocketId: String): IMetaInfo = MetaInfo(appContext, authKey, appRocketId)
 
-private fun provideRetrofit(okHttpClient: OkHttpClient, json: Json) =
+private fun provideRetrofit(okHttpClient: OkHttpClient, json: Json, serverEnvironment: UXRocketServer) =
     Retrofit.Builder()
         .client(okHttpClient)
-        .baseUrl(BASE_URL)
+        .baseUrl(serverEnvironment.serverUrl)
         .addConverterFactory(json.asConverterFactory(CONTENT_TYPE.toMediaType()))
         .build()
 

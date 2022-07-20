@@ -7,7 +7,9 @@ import android.provider.Settings
 import com.napoleonit.uxrocket.shared.UXRocketConstants.DEVICE_TYPE
 import com.napoleonit.uxrocket.shared.UXRocketConstants.OS_NAME
 import java.util.*
-
+import android.util.DisplayMetrics
+import android.view.Display
+import android.view.WindowManager
 
 class MetaInfo(
     appContext: Context,
@@ -16,6 +18,7 @@ class MetaInfo(
 ) : IMetaInfo {
     override val osName: String = OS_NAME
     override val deviceType: String = DEVICE_TYPE
+    override val resolution: String = getScreenResolution(appContext)
     override val deviceID: String = getDeviceId(appContext)
     override val osVersion: String = getOSVersion()
     override val deviceLocale: String = getLocale()
@@ -65,4 +68,14 @@ private fun getDeviceId(appContext: Context): String {
     return Settings
         .Secure
         .getString(appContext.contentResolver, Settings.Secure.ANDROID_ID)!!
+}
+
+private fun getScreenResolution(context: Context): String {
+    val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    val display: Display = wm.defaultDisplay
+    val metrics = DisplayMetrics()
+    display.getMetrics(metrics)
+    val width = metrics.widthPixels
+    val height = metrics.heightPixels
+    return width.toString() + "x" + height.toString()
 }

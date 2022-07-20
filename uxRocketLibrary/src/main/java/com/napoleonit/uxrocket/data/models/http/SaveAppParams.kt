@@ -29,7 +29,7 @@ data class SaveRawAppParamsRequestModel(
     @SerialName("params") val params: List<AttributeParameter>? = null
 ) {
     companion object {
-        fun bindModel(model: LogModel,metaInfo: IMetaInfo) = SaveRawAppParamsRequestModel(
+        fun bindModel(model: LogModel, metaInfo: IMetaInfo) = SaveRawAppParamsRequestModel(
             //from Cached-Data
             authKey = metaInfo.authKey,
             appRocketID = metaInfo.appRocketId,
@@ -43,6 +43,7 @@ data class SaveRawAppParamsRequestModel(
             deviceType = metaInfo.deviceType,
             city = metaInfo.city,
             country = metaInfo.country,
+            resolution = metaInfo.resolution,
 
             //from Log-Model
             item = model.item,

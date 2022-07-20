@@ -10,6 +10,7 @@ import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.SaveAppParamsUseCase
 import com.napoleonit.uxrocket.di.DI
+import com.napoleonit.uxrocket.shared.UXRocketServer
 import com.napoleonit.uxrocket.shared.execute
 import com.napoleonit.uxrocket.shared.logError
 import com.napoleonit.uxrocket.shared.logInfo
@@ -29,12 +30,14 @@ object UXRocket {
     fun configure(
         appContext: Context,
         authKey: String,
-        appRocketId: String
+        appRocketId: String,
+        serverEnvironment: UXRocketServer
     ) {
         DI.configure(
             appContext = appContext,
             authKey = authKey,
-            appRocketId = appRocketId
+            appRocketId = appRocketId,
+            serverEnvironment = serverEnvironment
         )
         isInitialized = true
     }

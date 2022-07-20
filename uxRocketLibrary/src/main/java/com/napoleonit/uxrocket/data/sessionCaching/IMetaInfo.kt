@@ -12,6 +12,7 @@ interface IMetaInfo {
     val appPackageName: String
     val deviceModelName: String
     val deviceType: String
+    val resolution: String
 
     var country: String?
     var city: String?
