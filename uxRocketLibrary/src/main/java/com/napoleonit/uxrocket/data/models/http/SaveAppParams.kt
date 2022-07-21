@@ -26,6 +26,7 @@ data class SaveRawAppParamsRequestModel(
     @SerialName("city") val city: String? = null,
     @SerialName("country") val country: String? = null,
     @SerialName("event_context") val eventContext: ContextEvent? = null,
+    @SerialName("visitor") val visitor: String,
     @SerialName("params") val params: List<AttributeParameter>? = null
 ) {
     companion object {
@@ -44,6 +45,7 @@ data class SaveRawAppParamsRequestModel(
             city = metaInfo.city,
             country = metaInfo.country,
             resolution = metaInfo.resolution,
+            visitor = metaInfo.visitor,
 
             //from Log-Model
             item = model.item,
