@@ -47,6 +47,8 @@ data class SaveRawAppParamsRequestModel(
             resolution = metaInfo.resolution,
             visitor = metaInfo.visitor,
 
+            connectionType = "",
+
             //from Log-Model
             item = model.item,
             itemName = model.itemName,

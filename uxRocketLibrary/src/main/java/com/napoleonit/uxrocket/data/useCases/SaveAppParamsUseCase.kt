@@ -26,6 +26,10 @@ class SaveAppParamsUseCase(
     override suspend fun run(params: LogModel): Either<Exception, Unit> {
         if (!sendFromCacheProcessRunning) sendFromCache()
         return try {
+
+            //Каждый раз берем тип подключении интернета т.к тип может менятся.
+            params.connectionType = networkState.connectionType
+
             val requestBody = SaveRawAppParamsRequestModel.bindModel(model = params, metaInfo = metaInfo)
             Success(repository.saveAppRawData(model = requestBody))
         } catch (e: Exception) {

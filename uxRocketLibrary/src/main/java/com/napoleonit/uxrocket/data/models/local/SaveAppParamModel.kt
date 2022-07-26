@@ -12,6 +12,8 @@ class LogModel(
     val event: ContextEvent,
     val params: List<AttributeParameter>? = null
 ) {
+    lateinit var connectionType: String
+
     var capturedDate: String = getCurrentDateString()
         private set
 }
