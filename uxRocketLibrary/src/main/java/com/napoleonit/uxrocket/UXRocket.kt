@@ -7,8 +7,12 @@ import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
 import com.napoleonit.uxrocket.data.models.http.AttributeParameter
 import com.napoleonit.uxrocket.data.models.http.ContextEvent
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.data.models.http.Campaign
+import com.napoleonit.uxrocket.data.models.http.GetVariantsRequestModel
+import com.napoleonit.uxrocket.data.models.local.GetVariantsModel
 import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetParamsUseCase
+import com.napoleonit.uxrocket.data.useCases.GetVariantsUseCase
 import com.napoleonit.uxrocket.data.useCases.SaveAppParamsUseCase
 import com.napoleonit.uxrocket.di.DI
 import com.napoleonit.uxrocket.shared.UXRocketServer
@@ -16,6 +20,7 @@ import com.napoleonit.uxrocket.shared.logError
 import com.napoleonit.uxrocket.shared.logInfo
 import kotlinx.coroutines.*
 import org.koin.java.KoinJavaComponent.inject
+import kotlin.coroutines.resume
 
 object UXRocket {
 
@@ -74,14 +79,36 @@ object UXRocket {
         }
     }
 
-    @ExperimentalCoroutinesApi
+    fun getUIConfiguration(forItem: String, parameters: List<AttributeParameter>? = null, callback: (List<Campaign>) -> Unit) {
+        val getVariantsUseCase: GetVariantsUseCase by inject(GetVariantsUseCase::class.java)
+        CoroutineScope(Dispatchers.IO).launch {
+            val getVariantModel = GetVariantsModel(
+                forItem = forItem,
+                parameters = parameters ?: getFromCache(this)
+            )
+            getVariantsUseCase(
+                params = getVariantModel,
+                onSuccess = { campaigns ->
+                    callback.invoke(campaigns)
+                },
+                onFailure = {
+                    "Get variant's failed: ${it.message}".logError()
+                })
+        }
+    }
+
     private suspend fun getFromCache(coroutineScope: CoroutineScope) = suspendCancellableCoroutine<List<AttributeParameter>?> { suspendCancellable ->
         val useCase: GetParamsUseCase by inject(GetParamsUseCase::class.java)
         coroutineScope.launch {
             useCase(
                 params = Unit,
-                onSuccess = { suspendCancellable.resume(it) {} },
-                onFailure = { suspendCancellable.cancel(null) })
+                onSuccess = { parameters ->
+                    suspendCancellable.resume(parameters)
+                },
+                onFailure = {
+                    suspendCancellable.cancel(null)
+                }
+            )
         }
     }
 
@@ -91,8 +118,8 @@ object UXRocket {
     }
 
     /**
-     * Данный метод назначает параметры по умолчанию в сесию (Кэширует), и при каждом вызове метода запросов
-     * в поле 'params' он будет вставлена если разработчик вручно не ввел другие обьекты массива 'params'
+     * Данный метод сохраняет параметры по умолчанию в сесию (Кэширует), и при каждом вызове метода запроса
+     * в поле 'params' он будет вставлена автоматически если разработчик вручно не ввел другие обьекты массива в поле 'params'
      */
     fun setDefaultsParams(params: List<AttributeParameter>) {
         val useCase: CachingParamsUseCase by inject(CachingParamsUseCase::class.java)

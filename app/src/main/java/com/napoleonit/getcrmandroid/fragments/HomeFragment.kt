@@ -1,6 +1,7 @@
 package com.napoleonit.getcrmandroid.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,15 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(layoutInflater)
 
         initView()
+
+        val params = listOf(AttributeParameter(id = "1", value = "190"))
+        /*UXRocket.getUIConfiguration(
+            forItem = "DemoController",
+            parameters = params,
+            callback = {
+                Log.e("Success", it.toString())
+            })*/
+
         return binding.root
     }
 

@@ -9,11 +9,8 @@ import com.napoleonit.uxrocket.data.models.http.SaveRawAppParamsRequestModel
 import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.data.repository.uxRocketRepository.IUXRocketRepository
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
-import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
 import com.napoleonit.uxrocket.shared.logError
 import com.napoleonit.uxrocket.shared.logInfo
-import org.koin.java.KoinJavaComponent
-import org.koin.java.KoinJavaComponent.inject
 
 class SaveAppParamsUseCase(
     private val repository: IUXRocketRepository,
@@ -30,7 +27,7 @@ class SaveAppParamsUseCase(
             //Каждый раз берем тип подключении интернета т.к тип может менятся.
             params.connectionType = networkState.connectionType
 
-            val requestBody = SaveRawAppParamsRequestModel.bindModel(model = params, metaInfo = metaInfo)
+            val requestBody = SaveRawAppParamsRequestModel.bindRequestModel(model = params, metaInfo = metaInfo)
             Success(repository.saveAppRawData(model = requestBody))
         } catch (e: Exception) {
             Failure(e)
@@ -47,7 +44,7 @@ class SaveAppParamsUseCase(
             "Cached SaveRowAppData empty".logInfo()
         } else {
             cachingData.forEach { logModel ->
-                val requestBody = SaveRawAppParamsRequestModel.bindModel(model = logModel, metaInfo = metaInfo)
+                val requestBody = SaveRawAppParamsRequestModel.bindRequestModel(model = logModel, metaInfo = metaInfo)
                 try {
                     repository.saveAppRawData(model = requestBody)
                 } catch (e: Exception) {

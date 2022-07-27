@@ -4,14 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import com.napoleonit.uxrocket.shared.UXRocketConstants.DEVICE_TYPE
-import com.napoleonit.uxrocket.shared.UXRocketConstants.OS_NAME
-import java.util.*
+import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.WindowManager
+import com.napoleonit.uxrocket.shared.UXRocketConstants.DEVICE_TYPE
+import com.napoleonit.uxrocket.shared.UXRocketConstants.OS_NAME
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.util.*
+
 
 class MetaInfo(
     appContext: Context,
@@ -28,6 +30,7 @@ class MetaInfo(
     override val appVersionName: String = getAppVersionName(appContext)
     override val deviceModelName: String = getDeviceName()
     override val visitor: String get() = convertDeviceIdToMD5(deviceID)
+    override val operatorName: String? = getOperatorName(appContext)
 
     /**
      * Оптиональные параметры
@@ -86,4 +89,8 @@ private fun getScreenResolution(context: Context): String {
 private fun convertDeviceIdToMD5(deviceId: String): String {
     val md = MessageDigest.getInstance("MD5")
     return BigInteger(1, md.digest(deviceId.toByteArray())).toString(16).padStart(32, '0')
+}
+
+private fun getOperatorName(context: Context): String? {
+    return (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).networkOperatorName
 }
