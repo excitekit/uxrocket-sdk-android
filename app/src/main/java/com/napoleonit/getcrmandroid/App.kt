@@ -25,7 +25,7 @@ class App : Application() {
         )
 
         UXRocket.setCountryAndCity("Armenia", "Yerevan")
-        UXRocket.debugModel(isEnabled = true)
+        UXRocket.debugMode(isEnabled = true)
 
         //SETTER DEFAULTS PARAMS SAMPLE
         UXRocket.setDefaultsParams(
@@ -33,12 +33,6 @@ class App : Application() {
                 AttributeParameter("2", "Красный"),
                 AttributeParameter("3", "Черный")
             )
-        )
-
-        UXRocket.logEvent(
-            itemIdentificator = "",
-            itemName = "UXRocket installed",
-            event = ContextEvent.INSTALL
         )
     }
 }

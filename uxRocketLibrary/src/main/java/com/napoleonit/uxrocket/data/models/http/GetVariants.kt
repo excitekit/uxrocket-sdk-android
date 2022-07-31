@@ -1,6 +1,8 @@
 package com.napoleonit.uxrocket.data.models.http
 
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.shared.Attribute
+import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -46,7 +48,7 @@ data class GetVariantsRequestModel(
 }
 
 @Serializable
-data class Element(
+data class ElementRequestModel(
     @SerialName("id") val id: Long,
     @SerialName("campaign_id") val campaignID: Long,
     @SerialName("variant_id") val variantID: Long
@@ -80,38 +82,3 @@ data class VariantAttr(
     @SerialName("item") val item: String,
     @SerialName("attributes") val attributes: List<Attribute>
 )
-
-@Serializable
-data class Attribute(
-    @SerialName("attribute") val attribute: AttributeValue,
-    @SerialName("value") val value: String
-)
-
-
-@Serializable
-enum class AttributeValue {
-    @SerialName("visibility")
-    VISIBILITY,
-    @SerialName("background-color")
-    BACKGROUND_COLOR,
-    @SerialName("alpha")
-    ALPHA,
-    @SerialName("layout")
-    LAYOUT,
-    @SerialName("text")
-    TEXT,
-    @SerialName("text-size")
-    TEXT_SIZE,
-    @SerialName("text-color")
-    TEXT_COLOR,
-    @SerialName("hint")
-    HINT,
-    @SerialName("hint-color")
-    HINT_COLOR,
-    @SerialName("gravity")
-    GRAVITY,
-    @SerialName("image")
-    IMAGE,
-    @SerialName("scale-type")
-    SCALE_TYPE,
-}

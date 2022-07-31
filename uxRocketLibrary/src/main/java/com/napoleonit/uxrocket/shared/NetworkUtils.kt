@@ -46,8 +46,8 @@ private fun isInternetAvailable(context: Context): Boolean {
 fun getNetworkConnectionType(context: Context): String {
     val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val info = cm.activeNetworkInfo
-    if (info == null || !info.isConnected) return "-"
-    if (info.type == ConnectivityManager.TYPE_WIFI) return "WIFI"
+    if (info == null || !info.isConnected) return "unknown"
+    if (info.type == ConnectivityManager.TYPE_WIFI) return "wifi"
     if (info.type == ConnectivityManager.TYPE_MOBILE) {
         return when (info.subtype) {
             TelephonyManager.NETWORK_TYPE_GPRS,
@@ -55,7 +55,7 @@ fun getNetworkConnectionType(context: Context): String {
             TelephonyManager.NETWORK_TYPE_CDMA,
             TelephonyManager.NETWORK_TYPE_1xRTT,
             TelephonyManager.NETWORK_TYPE_IDEN,
-            TelephonyManager.NETWORK_TYPE_GSM -> "2G"
+            TelephonyManager.NETWORK_TYPE_GSM -> "cell"//"2G"
             TelephonyManager.NETWORK_TYPE_UMTS,
             TelephonyManager.NETWORK_TYPE_EVDO_0,
             TelephonyManager.NETWORK_TYPE_EVDO_A,
@@ -65,10 +65,10 @@ fun getNetworkConnectionType(context: Context): String {
             TelephonyManager.NETWORK_TYPE_EVDO_B,
             TelephonyManager.NETWORK_TYPE_EHRPD,
             TelephonyManager.NETWORK_TYPE_HSPAP,
-            TelephonyManager.NETWORK_TYPE_TD_SCDMA -> "3G"
+            TelephonyManager.NETWORK_TYPE_TD_SCDMA -> "cell"// "3G"
             TelephonyManager.NETWORK_TYPE_LTE,
-            TelephonyManager.NETWORK_TYPE_IWLAN, 19 -> "4G"
-            TelephonyManager.NETWORK_TYPE_NR -> "5G"
+            TelephonyManager.NETWORK_TYPE_IWLAN, 19 -> "cell"// "4G"
+            TelephonyManager.NETWORK_TYPE_NR -> "cell"//"5G"
             else -> "?"
         }
     }

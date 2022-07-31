@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SaveRawAppParamsRequestModel(
+data class SaveRawAppDataRequestModel(
     @SerialName("auth_key") val authKey: String,
     @SerialName("app_rocket_id") val appRocketID: String,
     @SerialName("item_name") val itemName: String,
@@ -33,7 +33,7 @@ data class SaveRawAppParamsRequestModel(
         fun bindRequestModel(
             model: LogModel,
             metaInfo: IMetaInfo
-        ) = SaveRawAppParamsRequestModel(
+        ) = SaveRawAppDataRequestModel(
             authKey = metaInfo.authKey,
             appRocketID = metaInfo.appRocketId,
             osName = metaInfo.osName,

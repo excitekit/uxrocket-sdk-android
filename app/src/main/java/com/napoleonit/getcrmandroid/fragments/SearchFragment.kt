@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.napoleonit.getcrmandroid.databinding.FragmentSearchBinding
 import com.napoleonit.uxrocket.UXRocket
+import com.napoleonit.uxrocket.data.models.http.AttributeParameter
 import com.napoleonit.uxrocket.data.models.http.ContextEvent
 
 class SearchFragment : Fragment() {
@@ -29,6 +30,16 @@ class SearchFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchBinding.inflate(layoutInflater)
         initView()
+
+        val params = listOf(AttributeParameter(id = "1", value = "190"))
+
+        UXRocket.getUIConfiguration(
+            forItem = "DemoController",
+            parameters = params,
+            callback = {
+                UXRocket.customizeItems(items = listOf(binding.EditText, binding.TextView), it)
+            })
+
         return binding.root
     }
 

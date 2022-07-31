@@ -34,14 +34,6 @@ class HomeFragment : Fragment() {
 
         initView()
 
-        val params = listOf(AttributeParameter(id = "1", value = "190"))
-        /*UXRocket.getUIConfiguration(
-            forItem = "DemoController",
-            parameters = params,
-            callback = {
-                Log.e("Success", it.toString())
-            })*/
-
         return binding.root
     }
 

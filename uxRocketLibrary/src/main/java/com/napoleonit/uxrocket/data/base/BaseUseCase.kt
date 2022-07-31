@@ -3,7 +3,6 @@ package com.napoleonit.uxrocket.data.base
 import com.napoleonit.uxrocket.UXRocket
 import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
 import com.napoleonit.uxrocket.data.exceptions.UXRocketNotInitializedException
-import com.napoleonit.uxrocket.data.useCases.SaveAppParamsUseCase
 import com.napoleonit.uxrocket.shared.NetworkState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
