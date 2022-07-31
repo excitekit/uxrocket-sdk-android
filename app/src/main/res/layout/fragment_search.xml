@@ -35,7 +35,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/ImageView"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginTop="25dp"
@@ -49,10 +49,10 @@
         android:layout_height="wrap_content"
         android:text="Image View"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintBottom_toBottomOf="@+id/ImageView"
+        app:layout_constraintEnd_toEndOf="@+id/ImageView"
+        app:layout_constraintStart_toStartOf="@+id/ImageView"
+        app:layout_constraintTop_toTopOf="@+id/ImageView" />
 
     <EditText
         android:id="@+id/EditText"
@@ -61,7 +61,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="40dp"
         android:hint="Edit Text"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/ImageView"
         tools:layout_editor_absoluteX="20dp" />
 
     <Button

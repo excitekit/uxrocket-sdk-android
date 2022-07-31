@@ -16,6 +16,7 @@ class MainTestActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainTestBinding
     private var currentSelectedMenu = Menus.NON
+    private var ignoreHomepageLog = true
 
     enum class Menus {
         HOME,
@@ -41,11 +42,15 @@ class MainTestActivity : AppCompatActivity() {
                         currentSelectedMenu = Menus.HOME
                         openFragment(HomeFragment.getInstance())
 
-                        UXRocket.logEvent(
-                            itemIdentificator = "nav_home_button",
-                            itemName = "Nav home button pressed",
-                            event = ContextEvent.MAIN_MENU
-                        )
+                        if (!ignoreHomepageLog) {
+                            UXRocket.logEvent(
+                                itemIdentificator = "nav_home_button",
+                                itemName = "Nav home button pressed",
+                                event = ContextEvent.MAIN_MENU
+                            )
+                        }else {
+                            ignoreHomepageLog = false
+                        }
                     }
                 }
                 R.id.nav_search_button -> {

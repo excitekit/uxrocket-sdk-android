@@ -25,6 +25,10 @@ data class TextSizeAttribute(val value: String) : Attribute()
 data class TextAttribute(val value: String) : Attribute()
 
 @Serializable
+@SerialName("enabled")
+data class EnabledAttribute(val value: Boolean) : Attribute()
+
+@Serializable
 @SerialName("scale-type")
 data class ScaleTypeAttribute(val value: ScaleTypeAttributeValue) : Attribute() {
     @Serializable

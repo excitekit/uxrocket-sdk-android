@@ -37,7 +37,7 @@ class SearchFragment : Fragment() {
             forItem = "DemoController",
             parameters = params,
             callback = {
-                UXRocket.customizeItems(items = listOf(binding.EditText, binding.TextView), it)
+                UXRocket.customizeItems(items = listOf(binding.EditText, binding.TextView,binding.ImageView), it)
             })
 
         return binding.root
