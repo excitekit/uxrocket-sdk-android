@@ -20,20 +20,21 @@ data class SaveRawAppCampaignDataRequestModel(
     @SerialName("app_version_name") val appVersionMame: String,
     @SerialName("app_package_name") val appPackageName: String,
     @SerialName("resolution") val resolution: String,
+    @SerialName("item") val item: String? = null,
     @SerialName("city") val city: String? = null,
     @SerialName("country") val country: String? = null,
-    @SerialName("campaign_id") val campaignId: String,
-    @SerialName("action_name") val actionName: String,
+    @SerialName("campaign_id") val campaignId: Long? = null,
+    @SerialName("action_name") val actionName: String? = null,
     @SerialName("counting_type") val countingType: CountingType,
-    @SerialName("total_value") val totalValue: String,
-    @SerialName("variants") val variants: HashMap<String, String>,
-    @SerialName("params") val params: List<AttributeParameter>? = null
+    @SerialName("total_value") val totalValue: Int? = null,
+    @SerialName("params") val params: List<AttributeParameter>? = null,
+    @SerialName("variants") val variants: Map<String, Long>? = null,
 ) {
 
     companion object {
         fun bindRequestModel(
             model: LogCampaignModel,
-            metaInfo: IMetaInfo
+            metaInfo: IMetaInfo,
         ) = SaveRawAppCampaignDataRequestModel(
             authKey = metaInfo.authKey,
             appRocketId = metaInfo.appRocketId,
@@ -48,14 +49,14 @@ data class SaveRawAppCampaignDataRequestModel(
             country = metaInfo.country,
             resolution = metaInfo.resolution,
             visitor = metaInfo.visitor,
-            params = model.params,
-            campaignId = model.campaignId,
+            params = model.parameters,
             capturedDt = model.capturedDate,
             actionName = model.actionName,
             countingType = model.countingType,
-            totalValue = model.campaignId,
-            variants = model.variants
+            campaignId = model.campaignId,
+            totalValue = model.totalValue,
+            variants = model.variants,
+            item = model.itemIdentificator
         )
     }
-
 }

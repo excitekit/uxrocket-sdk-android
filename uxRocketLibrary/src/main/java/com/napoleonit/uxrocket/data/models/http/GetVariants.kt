@@ -3,7 +3,6 @@ package com.napoleonit.uxrocket.data.models.http
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 import com.napoleonit.uxrocket.data.models.local.ElementModel
 import com.napoleonit.uxrocket.data.models.local.ParentElementModel
-import com.napoleonit.uxrocket.shared.Attribute
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,14 +21,14 @@ data class GetVariantsRequestModel(
     @SerialName("country") val country: String? = null,
     @SerialName("item") val item: String,
     @SerialName("params") val params: List<AttributeParameter>? = null,
-    @SerialName("elements") val elements: List<ElementModel>? = null
+    @SerialName("elements") val elements: List<ElementModel>? = null,
 ) {
     companion object {
         fun bindRequestModel(
             item: String,
             metaInfo: IMetaInfo,
             parameters: List<AttributeParameter>? = null,
-            parentElementModel: ParentElementModel? = null
+            parentElementModel: ParentElementModel? = null,
         ) = GetVariantsRequestModel(
             authKey = metaInfo.authKey,
             appRocketID = metaInfo.appRocketId,
@@ -53,27 +52,50 @@ data class GetVariantsRequestModel(
 data class Campaign(
     @SerialName("id") val id: Long,
     @SerialName("variants") val variants: List<Variant>,
-    @SerialName("actions") val actions: List<Action>
-)
+    @SerialName("actions") val actions: List<Action>,
+) {
+    companion object {
+        fun bindVariantsForRequest(campaign: Campaign): Map<String, Long> {
+            val variants = HashMap<String, Long>()
+            val sortedVariants = campaign.variants.sortedBy { it.elementID }
+            sortedVariants.forEach { variant ->
+                variants["element_${variant.elementID}"] = variant.id
+            }
+            return variants.toSortedMap(compareBy { it.replace("[^0-9]".toRegex(), "").toInt() })
+        }
+    }
+}
 
 @Serializable
 data class Action(
     @SerialName("id") val id: Long,
     @SerialName("name") val name: String,
     @SerialName("item") val item: String,
-    @SerialName("action_type") val actionType: Long,
-    @SerialName("counting_type") val countingType: Long
-)
+    @SerialName("action_type") val actionType: Type,
+    @SerialName("counting_type") val countingType: Long,
+) {
+    @Serializable
+    enum class Type {
+        @SerialName("1")
+        CLICK,
+
+        @SerialName("0")
+        SHOW,
+
+        @SerialName("2")
+        ANY
+    }
+}
 
 @Serializable
 data class Variant(
     @SerialName("id") val id: Long,
     @SerialName("element_id") val elementID: Long,
-    @SerialName("variant_attrs") val variantAttrs: List<VariantAttr>? = null
+    @SerialName("variant_attrs") val variantAttrs: List<VariantAttr>? = null,
 )
 
 @Serializable
 data class VariantAttr(
     @SerialName("item") val item: String,
-    @SerialName("attributes") val attributes: List<Attribute>
+    @SerialName("attributes") val attributes: List<Attribute>,
 )

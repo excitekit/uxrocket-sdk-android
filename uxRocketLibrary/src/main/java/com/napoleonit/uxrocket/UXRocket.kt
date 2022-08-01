@@ -2,26 +2,22 @@ package com.napoleonit.uxrocket
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import com.napoleonit.uxrocket.data.cache.globalCaching.ICaching
 import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
-import com.napoleonit.uxrocket.data.models.http.AttributeParameter
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
-import com.napoleonit.uxrocket.data.models.http.Campaign
+import com.napoleonit.uxrocket.data.models.http.*
 import com.napoleonit.uxrocket.data.models.local.GetVariantsModel
-import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
-import com.napoleonit.uxrocket.data.useCases.GetParamsUseCase
-import com.napoleonit.uxrocket.data.useCases.GetVariantsUseCase
-import com.napoleonit.uxrocket.data.useCases.SaveRawAppDataUseCase
+import com.napoleonit.uxrocket.data.models.local.LogCampaignModel
+import com.napoleonit.uxrocket.data.useCases.*
 import com.napoleonit.uxrocket.di.DI
 import com.napoleonit.uxrocket.shared.*
 import kotlinx.coroutines.*
 import org.koin.java.KoinJavaComponent.inject
-import kotlin.coroutines.resume
 
 object UXRocket {
+
+    private val allCampaignInSession = ArrayList<Campaign>()
 
     var isDebugModeEnabled = false
         private set
@@ -45,7 +41,7 @@ object UXRocket {
         appContext: Context,
         authKey: String,
         appRocketId: String,
-        serverEnvironment: UXRocketServer
+        serverEnvironment: UXRocketServer,
     ) {
         DI.configure(
             appContext = appContext,
@@ -74,11 +70,16 @@ object UXRocket {
         itemIdentificator: String,
         itemName: String,
         event: ContextEvent,
-        parameters: List<AttributeParameter>? = null
+        parameters: List<AttributeParameter>? = null,
     ) {
         val saveRawAppDataUseCase: SaveRawAppDataUseCase by inject(SaveRawAppDataUseCase::class.java)
         CoroutineScope(Dispatchers.IO).launch {
-            val logModel = LogModel(itemIdentificator, itemName, event, parameters ?: getAttributeParametersFromCache(this))
+            val logModel = LogModel(
+                item = itemIdentificator,
+                itemName = itemName,
+                event = event,
+                parameters = parameters
+            )
             saveRawAppDataUseCase(
                 params = logModel,
                 onSuccess = {
@@ -91,7 +92,8 @@ object UXRocket {
                         // Проверяем причину сбоя, если причина один из нижних приведенных exception-ов
                         // кэшируем запрос
                         BaseUXRocketApiException.FailedToSaveQueue,
-                        BaseUXRocketApiException.NoInternetConnection -> {
+                        BaseUXRocketApiException.NoInternetConnection,
+                        -> {
                             val taskCaching by inject<ICaching>(ICaching::class.java)
                             taskCaching.addLogEventTaskToQueue(logModel)
                         }
@@ -103,18 +105,107 @@ object UXRocket {
     }
 
     /**
+     * Вызывает метод SaveRawAppData (аналог названия LogEvent)
+     **/
+    fun logCampaignEvent(
+        activityOrFragmentName: String,
+        itemIdentificator: String? = null,
+        totalValue: Int? = null,
+        parameters: List<AttributeParameter>? = null,
+    ) {
+        allCampaignInSession.forEach { campaign ->
+            campaign.actions.find { it.item == itemIdentificator }?.let { action ->
+                if (action.actionType == Action.Type.CLICK) {
+                    val logCampaignModel = LogCampaignModel(
+                        activityOrFragmentName = activityOrFragmentName,
+                        itemIdentificator = itemIdentificator,
+                        totalValue = totalValue,
+                        actionName = action.name,
+                        parameters = parameters,
+                        variants = Campaign.bindVariantsForRequest(campaign)
+                    )
+                    logCampaignEvent(logCampaignModel)
+                }
+            }
+        }
+    }
+
+    /**
+     * Вызывает метод SaveRawCampaignData (аналог названия LogCampaignEvent)
+     **/
+    private fun logCampaignEvent(logCampaignModel: LogCampaignModel) {
+        val saveRawAppCampaignDataUseCase: SaveRawAppCampaignDataUseCase by inject(SaveRawAppCampaignDataUseCase::class.java)
+        CoroutineScope(Dispatchers.IO).launch {
+            saveRawAppCampaignDataUseCase(
+                params = logCampaignModel,
+                onSuccess = {
+                    "Params saved".logInfo()
+                },
+                onFailure = {
+                    "Save app Params failed: ${it.message}".logError()
+
+                    when (it) {
+                        // Проверяем причину сбоя, если причина один из нижних приведенных exception-ов
+                        // кэшируем запрос
+                        BaseUXRocketApiException.FailedToSaveQueue,
+                        BaseUXRocketApiException.NoInternetConnection,
+                        -> {
+                            val taskCaching by inject<ICaching>(ICaching::class.java)
+                            taskCaching.addLogCampaignEventTaskToQueue(logCampaignModel)
+                        }
+                    }
+
+                }
+            )
+        }
+    }
+
+    /**
+     * Метод который вызывается автономно при успешном запросе getVariants
+     **/
+    private fun logCampaignOpenPageEvent(
+        activityOrFragmentName: String,
+        campaignId: Long,
+        parameters: List<AttributeParameter>? = null,
+        variants: Map<String, Long>? = null,
+    ) {
+
+        val logCampaignModel = LogCampaignModel(
+            actionName = "OpenPage",
+            parameters = parameters,
+            campaignId = campaignId,
+            variants = variants,
+            activityOrFragmentName = activityOrFragmentName,
+        )
+
+        logCampaignEvent(logCampaignModel)
+    }
+
+
+    /**
      * Данный метод вызывает метод GetVariant's
      **/
-    fun getUIConfiguration(forItem: String, parameters: List<AttributeParameter>? = null, callback: (List<Campaign>) -> Unit) {
+    fun getUIConfiguration(activityOrFragmentName: String, parameters: List<AttributeParameter>? = null, callback: (List<Campaign>) -> Unit) {
         val getVariantsUseCase: GetVariantsUseCase by inject(GetVariantsUseCase::class.java)
         CoroutineScope(Dispatchers.IO).launch {
             val getVariantModel = GetVariantsModel(
-                forItem = forItem,
-                parameters = parameters ?: getAttributeParametersFromCache(this)
+                activityOrFragmentName = activityOrFragmentName,
+                parameters = parameters
             )
             getVariantsUseCase(
                 params = getVariantModel,
                 onSuccess = { campaigns ->
+                    insertCampaignsInSession(campaigns)
+                    campaigns.forEach { campaign ->
+
+                        logCampaignOpenPageEvent(
+                            activityOrFragmentName = activityOrFragmentName,
+                            campaignId = campaign.id,
+                            parameters = parameters,
+                            variants = Campaign.bindVariantsForRequest(campaign),
+                        )
+
+                    }
                     callback.invoke(campaigns)
                 },
                 onFailure = {
@@ -123,25 +214,18 @@ object UXRocket {
         }
     }
 
-    /**
-     * Данный метод возврощает список #AttributeParameter из кэша
-     **/
-    private suspend fun getAttributeParametersFromCache(coroutineScope: CoroutineScope) =
-        suspendCancellableCoroutine<List<AttributeParameter>?> { suspendCancellable ->
-
-            val useCase: GetParamsUseCase by inject(GetParamsUseCase::class.java)
-            coroutineScope.launch {
-                useCase(
-                    params = Unit,
-                    onSuccess = { parameters ->
-                        suspendCancellable.resume(parameters)
-                    },
-                    onFailure = {
-                        suspendCancellable.cancel(null)
-                    }
-                )
+    private fun insertCampaignsInSession(campaigns: List<Campaign>) {
+        campaigns.forEach { campaign ->
+            val foundCampaign = allCampaignInSession.find { it.id == campaign.id }
+            val isExist = foundCampaign != null
+            if (isExist) {
+                val foundIndex = allCampaignInSession.indexOf(foundCampaign)
+                allCampaignInSession[foundIndex] = campaign
+            } else {
+                allCampaignInSession.add(campaign)
             }
         }
+    }
 
     /**
      * Данный метод сохраняет поля country и city для запросов LogEvent

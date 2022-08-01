@@ -56,11 +56,10 @@ fun getDataModule(appContext: Context, authKey: String, appRocketId: String, ser
     single<IUXRocketRepository> { UXRocketRepositoryImpl(get()) }
 
     /**Use case's*/
-    single { SaveRawAppDataUseCase(get(), get(), get()) }
-    single { SaveRawAppCampaignDataUseCase(get(), get(), get()) }
+    single { SaveRawAppDataUseCase(get(), get(), get(), get()) }
+    single { SaveRawAppCampaignDataUseCase(get(), get(), get(), get()) }
     single { CachingParamsUseCase(get()) }
-    single { GetParamsUseCase(get()) }
-    single { GetVariantsUseCase(get(), get(), get(), ReadAssetsUtil(appContext)) }//Todo удалить ReadAssetsUtil обьект при релизе
+    single { GetVariantsUseCase(get(), get(), get(), get(), ReadAssetsUtil(appContext)) }//Todo удалить ReadAssetsUtil обьект при релизе
 }
 
 fun provideNetworkState(appContext: Context) = NetworkState(appContext)

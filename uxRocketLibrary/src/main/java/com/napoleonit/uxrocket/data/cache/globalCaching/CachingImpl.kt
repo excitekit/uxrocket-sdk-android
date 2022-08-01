@@ -80,8 +80,8 @@ class CachingImpl(
         sharedPreferences.edit().remove(LOG_CAMPAIGN_EVENT_TASK_LIST).apply()
     }
 
-    override fun getElementByFromItem(fromItem: String): ParentElementModel? {
-        return getElements().find { it.fromItem == fromItem }
+    override fun getElementByActivityOrFragmentName(activityOrFragmentName: String): ParentElementModel? {
+        return getElements().find { it.activityOrFragmentName == activityOrFragmentName }
     }
 
     override fun getElements(): List<ParentElementModel> {
@@ -91,24 +91,24 @@ class CachingImpl(
         else json.decodeFromString(ListSerializer(ParentElementModel.serializer()), dataJson)
     }
 
-    override fun addElements(fromItem: String, elements: List<ElementModel>) {
+    override fun addElements(activityOrFragmentName: String, elements: List<ElementModel>) {
         val modifiedList = ArrayList(getElements())
 
-        if (modifiedList.isElementExist(fromItem)) {
-            modifiedList[modifiedList.getElementIndex(fromItem)] = ParentElementModel(fromItem, elements)
+        if (modifiedList.isElementExist(activityOrFragmentName)) {
+            modifiedList[modifiedList.getElementIndex(activityOrFragmentName)] = ParentElementModel(activityOrFragmentName, elements)
         } else {
-            modifiedList.add(ParentElementModel(fromItem, elements))
+            modifiedList.add(ParentElementModel(activityOrFragmentName, elements))
         }
 
         val dataJson = json.encodeToString(ListSerializer(ParentElementModel.serializer()), modifiedList)
         sharedPreferences.edit().putString(VARIANTS_ELEMENT_LIST, dataJson).apply()
     }
 
-    private fun List<ParentElementModel>.isElementExist(fromItem: String): Boolean {
-        return find { it.fromItem == fromItem } != null
+    private fun List<ParentElementModel>.isElementExist(ActivityOrFragmentName: String): Boolean {
+        return find { it.activityOrFragmentName == ActivityOrFragmentName } != null
     }
 
-    private fun List<ParentElementModel>.getElementIndex(fromItem: String): Int {
-        return indexOf(find { it.fromItem == fromItem })
+    private fun List<ParentElementModel>.getElementIndex(ActivityOrFragmentName: String): Int {
+        return indexOf(find { it.activityOrFragmentName == ActivityOrFragmentName })
     }
 }

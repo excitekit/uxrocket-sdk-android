@@ -55,7 +55,7 @@ data class SaveRawAppDataRequestModel(
             itemName = model.itemName,
             captureDt = model.capturedDate,
             eventContext = model.event,
-            params = model.params
+            params = model.parameters
         )
     }
 }

@@ -11,7 +11,7 @@ class LogModel(
     val item: String,
     val itemName: String,
     val event: ContextEvent,
-    val params: List<AttributeParameter>? = null
+    var parameters: List<AttributeParameter>? = null
 ) {
     lateinit var connectionType: String
 
@@ -21,15 +21,18 @@ class LogModel(
 
 @Serializable
 class LogCampaignModel(
-    val campaignId: String,
-    val actionName: String,
-    val totalValue: Int,
-    val countingType: CountingType,
-    val variants: HashMap<String, String>,
-    val params: List<AttributeParameter>? = null
+    val campaignId: Long? = null,
+    val totalValue: Int? = null,
+    var parameters: List<AttributeParameter>? = null,
+    val itemIdentificator: String? = null,
+    val actionName: String? = null,
+    val activityOrFragmentName: String,
+    val variants: Map<String, Long> ?= null
 ) {
     var capturedDate: String = getCurrentDateString()
         private set
+
+    var countingType: CountingType = CountingType.COUNTING_PARAMETER
 }
 
 @Serializable

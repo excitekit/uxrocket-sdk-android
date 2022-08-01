@@ -2,7 +2,9 @@ package com.napoleonit.uxrocket.data.repository.paramsRepository
 
 import com.napoleonit.uxrocket.data.models.http.AttributeParameter
 
-
+/**
+ * Кэширования на уровне сессии приложения.
+ */
 class ParamsRepositoryImpl : IParamsRepository {
     private val paramsData = ArrayList<AttributeParameter>()
 

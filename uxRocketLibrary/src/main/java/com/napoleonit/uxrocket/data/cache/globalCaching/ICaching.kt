@@ -32,7 +32,7 @@ interface ICaching {
     /**
      * Variant's element
      **/
-    fun getElementByFromItem(fromItem: String): ParentElementModel?
+    fun getElementByActivityOrFragmentName(activityOrFragmentName: String): ParentElementModel?
     fun getElements(): List<ParentElementModel>?
-    fun addElements(fromItem: String, elements: List<ElementModel>)
+    fun addElements(activityOrFragmentName: String, elements: List<ElementModel>)
 }

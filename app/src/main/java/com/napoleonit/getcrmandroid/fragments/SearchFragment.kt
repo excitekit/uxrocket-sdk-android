@@ -29,27 +29,18 @@ class SearchFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchBinding.inflate(layoutInflater)
-        initView()
-
         val params = listOf(AttributeParameter(id = "1", value = "190"))
 
         UXRocket.getUIConfiguration(
-            forItem = "DemoController",
+            activityOrFragmentName = "DemoController",
             parameters = params,
             callback = {
-                UXRocket.customizeItems(items = listOf(binding.EditText, binding.TextView,binding.ImageView), it)
+                UXRocket.customizeItems(items = listOf(binding.EditText, binding.TextView, binding.ImageView), it)
+                binding.searchByNameButton.setOnClickListener {
+                    UXRocket.logCampaignEvent("DemoController", "search_by_name_button", totalValue = 1)
+                }
             })
 
         return binding.root
-    }
-
-    private fun initView() = with(binding) {
-        searchByName.setOnClickListener {
-            UXRocket.logEvent(
-                itemIdentificator = "search_by_name",
-                itemName = "Search by name button pressed",
-                event = ContextEvent.OPEN_PAGE
-            )
-        }
     }
 }

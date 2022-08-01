@@ -75,7 +75,7 @@
                 tools:layout_editor_absoluteX="20dp" />
 
             <Button
-                android:id="@+id/search_by_name"
+                android:id="@+id/search_by_name_button"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginHorizontal="20sp"

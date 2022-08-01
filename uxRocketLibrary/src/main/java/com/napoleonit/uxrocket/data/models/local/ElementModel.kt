@@ -1,5 +1,7 @@
 package com.napoleonit.uxrocket.data.models.local
 
+import com.napoleonit.uxrocket.data.models.http.Action
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -8,13 +10,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ParentElementModel(
-    val fromItem: String,
-    val elements: List<ElementModel>
+    @SerialName("activity_or_fragment_name")  val activityOrFragmentName: String,
+    @SerialName("elements")  val elements: List<ElementModel>
 )
 
 @Serializable
 data class ElementModel(
     val id: Long,
     val campaignId: Long,
-    val variantId: Long
+    val variantId: Long,
+    var actions: List<Action>? = null
 )

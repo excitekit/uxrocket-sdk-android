@@ -10,27 +10,36 @@ import com.napoleonit.uxrocket.data.models.http.Campaign
 import com.napoleonit.uxrocket.data.models.http.GetVariantsRequestModel
 import com.napoleonit.uxrocket.data.models.local.ElementModel
 import com.napoleonit.uxrocket.data.models.local.GetVariantsModel
+import com.napoleonit.uxrocket.data.repository.paramsRepository.IParamsRepository
 import com.napoleonit.uxrocket.data.repository.uxRocketRepository.IUXRocketRepository
 import com.napoleonit.uxrocket.shared.ReadAssetsUtil
 import com.napoleonit.uxrocket.shared.logInfo
 import kotlinx.serialization.json.Json
 
 class GetVariantsUseCase(
+    private val paramsRepository: IParamsRepository,
     private val repository: IUXRocketRepository,
     private val metaInfo: IMetaInfo,
     private val caching: ICaching,
-    private val readAssetsUtil: ReadAssetsUtil//Todo удалить при релизе
+    private val readAssetsUtil: ReadAssetsUtil,//Todo удалить при релизе
 ) : UseCase<List<Campaign>, GetVariantsModel>() {
     override suspend fun run(params: GetVariantsModel): Either<Exception, List<Campaign>> {
         return try {
-            val elements = caching.getElementByFromItem(params.forItem)
-            val requestModel = GetVariantsRequestModel.bindRequestModel(params.forItem, metaInfo, params.parameters, elements)
+            val elements = caching.getElementByActivityOrFragmentName(params.activityOrFragmentName)
+
+            //Если разработчик передал пустой список параметров,
+            // то мы берем список из кэша (если были ранее сохраннены)
+            if (params.parameters.isNullOrEmpty()) {
+                params.parameters = paramsRepository.getParams()
+            }
+
+            val requestModel = GetVariantsRequestModel.bindRequestModel(params.activityOrFragmentName, metaInfo, params.parameters, elements)
 
             //Todo удалить при релизе
             Json.encodeToString(GetVariantsRequestModel.serializer(), requestModel).logInfo()
 
             val response = repository.getVariants(requestModel)
-            cacheElements(response, forItem = params.forItem)
+            cacheElements(response, activityOrFragmentName = params.activityOrFragmentName)
             Success(response)
 
             //Todo удалить при релизе
@@ -42,15 +51,21 @@ class GetVariantsUseCase(
     }
 
 
-    private fun cacheElements(data: List<Campaign>, forItem: String) {
-        val cachedElements = ArrayList<ElementModel>()
-        data.forEach { campaign ->
+    private fun cacheElements(data: List<Campaign>, activityOrFragmentName: String) {
+        val needCachedElements = ArrayList<ElementModel>()
+        val filteredData = data.filter { it.variants.isNotEmpty() }
+        filteredData.forEach { campaign ->
             campaign.variants.forEach { variant ->
-                val elementModel = ElementModel(variant.elementID , campaign.id, variant.id)
-                cachedElements.add(elementModel)
+                val elementModel = ElementModel(
+                    id = variant.elementID,
+                    campaignId = campaign.id,
+                    variantId = variant.id,
+                    actions = campaign.actions
+                )
+                needCachedElements.add(elementModel)
             }
-            caching.addElements(forItem, cachedElements)
-            cachedElements.clear()
+            caching.addElements(activityOrFragmentName, needCachedElements)
+            needCachedElements.clear()
         }
     }
 }

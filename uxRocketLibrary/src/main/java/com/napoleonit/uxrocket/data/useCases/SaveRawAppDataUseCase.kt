@@ -10,10 +10,12 @@ import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.data.repository.uxRocketRepository.IUXRocketRepository
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 import com.napoleonit.uxrocket.data.models.http.ContextEvent
+import com.napoleonit.uxrocket.data.repository.paramsRepository.IParamsRepository
 import com.napoleonit.uxrocket.shared.logError
 import com.napoleonit.uxrocket.shared.logInfo
 
 class SaveRawAppDataUseCase(
+    private val paramsRepository: IParamsRepository,
     private val repository: IUXRocketRepository,
     private val taskCaching: ICaching,
     private val metaInfo: IMetaInfo
@@ -25,7 +27,15 @@ class SaveRawAppDataUseCase(
         if (!sendFromCacheProcessRunning) sendFromCache()
         return try {
 
+            //Если event == INSTALL, мы будем хранить стейт для того чтобы
+            //каждый раз при запуске приложения не вызывался автономно данный метод.
             val needCacheInstallEventState = params.event == ContextEvent.INSTALL
+
+            //Если разработчик передал пустой список параметров,
+            // то мы берем список из кэша (если были ранее сохраннены)
+            if (params.parameters.isNullOrEmpty()) {
+                params.parameters = paramsRepository.getParams()
+            }
 
             //Каждый раз берем тип подключении интернета т.к тип может менятся.
             params.connectionType = networkState.connectionType

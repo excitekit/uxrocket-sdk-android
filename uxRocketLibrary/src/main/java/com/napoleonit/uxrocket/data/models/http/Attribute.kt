@@ -1,4 +1,4 @@
-package com.napoleonit.uxrocket.shared
+package com.napoleonit.uxrocket.data.models.http
 
 import android.view.Gravity
 import android.view.View
