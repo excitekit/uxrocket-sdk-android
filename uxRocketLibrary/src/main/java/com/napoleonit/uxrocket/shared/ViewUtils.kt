@@ -7,16 +7,21 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import coil.load
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 fun View.getIdName(): String = resources.getResourceName(this.id)
 
 fun View.customize(attributes: List<Attribute>) {
-    when (this) {
-        is TextView -> customizeTextView(attributes)
-        is EditText -> customizeEditText(attributes)
-        is ImageView -> customizeImageView(attributes)
-        is Button -> customizeButton(attributes)
-        else -> customizeView(attributes)
+    CoroutineScope(Dispatchers.Main).launch {
+        when (this@customize) {
+            is TextView -> customizeTextView(attributes)
+            is EditText -> customizeEditText(attributes)
+            is ImageView -> customizeImageView(attributes)
+            is Button -> customizeButton(attributes)
+            else -> customizeView(attributes)
+        }
     }
 }
 

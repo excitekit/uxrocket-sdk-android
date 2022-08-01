@@ -60,7 +60,7 @@ fun getDataModule(appContext: Context, authKey: String, appRocketId: String, ser
     single { SaveRawAppCampaignDataUseCase(get(), get(), get()) }
     single { CachingParamsUseCase(get()) }
     single { GetParamsUseCase(get()) }
-    single { GetVariantsUseCase(get(), get(), ReadAssetsUtil(appContext)) }//Todo удалить ReadAssetsUtil обьект при релизе
+    single { GetVariantsUseCase(get(), get(), get(), ReadAssetsUtil(appContext)) }//Todo удалить ReadAssetsUtil обьект при релизе
 }
 
 fun provideNetworkState(appContext: Context) = NetworkState(appContext)

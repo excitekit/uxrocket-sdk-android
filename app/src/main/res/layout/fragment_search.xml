@@ -23,56 +23,67 @@
             android:textStyle="bold" />
     </Toolbar>
 
-    <TextView
-        android:id="@+id/TextView"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:gravity="center"
-        android:text="TextView"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-    <ImageView
-        android:id="@+id/ImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="25dp"
-        android:background="@color/gray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextView" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Image View"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/ImageView"
-        app:layout_constraintEnd_toEndOf="@+id/ImageView"
-        app:layout_constraintStart_toStartOf="@+id/ImageView"
-        app:layout_constraintTop_toTopOf="@+id/ImageView" />
+            <TextView
+                android:id="@+id/TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <EditText
-        android:id="@+id/EditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="40dp"
-        android:hint="Edit Text"
-        app:layout_constraintTop_toBottomOf="@+id/ImageView"
-        tools:layout_editor_absoluteX="20dp" />
+            <ImageView
+                android:id="@+id/ImageView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="25dp"
+                android:background="@color/gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/TextView" />
 
-    <Button
-        android:id="@+id/search_by_name"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginHorizontal="20sp"
-        android:layout_marginTop="25dp"
-        android:text="Send text button!"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EditText" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Image View"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/ImageView"
+                app:layout_constraintEnd_toEndOf="@+id/ImageView"
+                app:layout_constraintStart_toStartOf="@+id/ImageView"
+                app:layout_constraintTop_toTopOf="@+id/ImageView" />
 
+            <EditText
+                android:id="@+id/EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="40dp"
+                android:hint="Edit Text"
+                app:layout_constraintTop_toBottomOf="@+id/ImageView"
+                tools:layout_editor_absoluteX="20dp" />
+
+            <Button
+                android:id="@+id/search_by_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="20sp"
+                android:layout_marginTop="25dp"
+                android:text="Send text button!"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/EditText" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,9 @@
 package com.napoleonit.uxrocket.data.models.http
 
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.data.models.local.ElementModel
+import com.napoleonit.uxrocket.data.models.local.ParentElementModel
 import com.napoleonit.uxrocket.shared.Attribute
-import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,13 +22,14 @@ data class GetVariantsRequestModel(
     @SerialName("country") val country: String? = null,
     @SerialName("item") val item: String,
     @SerialName("params") val params: List<AttributeParameter>? = null,
-    @SerialName("elements") val elements: List<Campaign>? = null
+    @SerialName("elements") val elements: List<ElementModel>? = null
 ) {
     companion object {
         fun bindRequestModel(
             item: String,
             metaInfo: IMetaInfo,
-            parameters: List<AttributeParameter>? = null
+            parameters: List<AttributeParameter>? = null,
+            parentElementModel: ParentElementModel? = null
         ) = GetVariantsRequestModel(
             authKey = metaInfo.authKey,
             appRocketID = metaInfo.appRocketId,
@@ -40,19 +42,12 @@ data class GetVariantsRequestModel(
             city = metaInfo.city,
             country = metaInfo.country,
             resolution = metaInfo.resolution,
-
+            elements = parentElementModel?.elements,
             item = item,
             params = parameters
         )
     }
 }
-
-@Serializable
-data class ElementRequestModel(
-    @SerialName("id") val id: Long,
-    @SerialName("campaign_id") val campaignID: Long,
-    @SerialName("variant_id") val variantID: Long
-)
 
 @Serializable
 data class Campaign(
@@ -73,7 +68,7 @@ data class Action(
 @Serializable
 data class Variant(
     @SerialName("id") val id: Long,
-    @SerialName("element_id") val elementID: Long? = null,
+    @SerialName("element_id") val elementID: Long,
     @SerialName("variant_attrs") val variantAttrs: List<VariantAttr>? = null
 )
 

@@ -2,6 +2,7 @@ package com.napoleonit.uxrocket
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import com.napoleonit.uxrocket.data.cache.globalCaching.ICaching
 import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException

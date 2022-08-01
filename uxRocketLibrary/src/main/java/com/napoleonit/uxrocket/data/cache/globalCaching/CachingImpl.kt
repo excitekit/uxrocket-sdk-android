@@ -2,6 +2,8 @@ package com.napoleonit.uxrocket.data.cache.globalCaching
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import com.napoleonit.uxrocket.data.models.local.ParentElementModel
+import com.napoleonit.uxrocket.data.models.local.ElementModel
 import com.napoleonit.uxrocket.data.models.local.LogCampaignModel
 import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.shared.logInfo
@@ -17,6 +19,7 @@ class CachingImpl(
     companion object {
         const val LOG_EVENT_TASK_LIST = "LogEventTaskList"
         const val LOG_CAMPAIGN_EVENT_TASK_LIST = "LogCampaignEventTaskList"
+        const val VARIANTS_ELEMENT_LIST = "VariantsElementList"
         const val INSTALL_EVENT_CALLED = "InstallEventCalled"
     }
 
@@ -75,5 +78,37 @@ class CachingImpl(
     override fun removeLogCampaignEventTaskList() {
         "Campaign logs removed from cache.".logInfo()
         sharedPreferences.edit().remove(LOG_CAMPAIGN_EVENT_TASK_LIST).apply()
+    }
+
+    override fun getElementByFromItem(fromItem: String): ParentElementModel? {
+        return getElements().find { it.fromItem == fromItem }
+    }
+
+    override fun getElements(): List<ParentElementModel> {
+        val dataJson = sharedPreferences.getString(VARIANTS_ELEMENT_LIST, "")
+
+        return if (dataJson.isNullOrEmpty()) emptyList()
+        else json.decodeFromString(ListSerializer(ParentElementModel.serializer()), dataJson)
+    }
+
+    override fun addElements(fromItem: String, elements: List<ElementModel>) {
+        val modifiedList = ArrayList(getElements())
+
+        if (modifiedList.isElementExist(fromItem)) {
+            modifiedList[modifiedList.getElementIndex(fromItem)] = ParentElementModel(fromItem, elements)
+        } else {
+            modifiedList.add(ParentElementModel(fromItem, elements))
+        }
+
+        val dataJson = json.encodeToString(ListSerializer(ParentElementModel.serializer()), modifiedList)
+        sharedPreferences.edit().putString(VARIANTS_ELEMENT_LIST, dataJson).apply()
+    }
+
+    private fun List<ParentElementModel>.isElementExist(fromItem: String): Boolean {
+        return find { it.fromItem == fromItem } != null
+    }
+
+    private fun List<ParentElementModel>.getElementIndex(fromItem: String): Int {
+        return indexOf(find { it.fromItem == fromItem })
     }
 }

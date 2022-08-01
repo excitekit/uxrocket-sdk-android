@@ -6,8 +6,8 @@ import com.napoleonit.uxrocket.shared.UXRocketConstants.NAME_SDK
 
 
 fun String.convertToPx(): Float {
-    val unit = this.map { it.isLetter() }.toString()
-    val size = this.map { !it.isLetter() }.toString().toFloat()
+    val unit = this.filter { it.isLetter() }
+    val size = this.filter { !it.isLetter() }.toFloat()
     return applyDimension(
         getSizeUnit(unit),
         size,

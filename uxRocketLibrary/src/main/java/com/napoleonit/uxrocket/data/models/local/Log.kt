@@ -38,5 +38,8 @@ enum class CountingType {
     SHOW,
 
     @SerialName("1")
-    COUNTING_PARAMETER
+    COUNTING_PARAMETER,
+
+    @SerialName("2")
+    COUNTING_PARAMETER_2
 }
