@@ -34,7 +34,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/TextView"
+                android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
@@ -42,48 +42,49 @@
                 android:text="TextView"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/ImageView"
+                android:id="@+id/imageView"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="25dp"
                 android:background="@color/gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/TextView" />
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Image View"
                 android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="@+id/ImageView"
-                app:layout_constraintEnd_toEndOf="@+id/ImageView"
-                app:layout_constraintStart_toStartOf="@+id/ImageView"
-                app:layout_constraintTop_toTopOf="@+id/ImageView" />
+                app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                app:layout_constraintEnd_toEndOf="@+id/imageView"
+                app:layout_constraintStart_toStartOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="@+id/imageView" />
 
             <EditText
-                android:id="@+id/EditText"
+                android:id="@+id/editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="40dp"
                 android:hint="Edit Text"
-                app:layout_constraintTop_toBottomOf="@+id/ImageView"
+                app:layout_constraintTop_toBottomOf="@+id/imageView"
                 tools:layout_editor_absoluteX="20dp" />
 
             <Button
                 android:id="@+id/search_by_name_button"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20sp"
                 android:layout_marginTop="25dp"
+                android:minHeight="50dp"
                 android:text="Send text button!"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/EditText" />
+                app:layout_constraintTop_toBottomOf="@+id/editText" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

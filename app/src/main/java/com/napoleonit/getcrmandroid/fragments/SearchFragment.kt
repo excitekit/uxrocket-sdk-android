@@ -32,12 +32,12 @@ class SearchFragment : Fragment() {
         val params = listOf(AttributeParameter(id = "1", value = "190"))
 
         UXRocket.getUIConfiguration(
-            activityOrFragmentName = "DemoController",
+            activityOrFragmentName = "SearchPage",
             parameters = params,
             callback = {
-                UXRocket.customizeItems(items = listOf(binding.EditText, binding.TextView, binding.ImageView), it)
+                UXRocket.customizeItems(items = listOf(binding.editText, binding.textView, binding.imageView, binding.searchByNameButton), it)
                 binding.searchByNameButton.setOnClickListener {
-                    UXRocket.logCampaignEvent("DemoController", "search_by_name_button", totalValue = 1)
+                    UXRocket.logCampaignEvent("SearchPage", "search_by_name_button", totalValue = 1)
                 }
             })
 
