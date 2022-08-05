@@ -3,16 +3,21 @@ package com.napoleonit.uxrocket
 import android.content.Context
 import android.view.View
 import com.napoleonit.uxrocket.data.cache.globalCaching.ICaching
-import com.napoleonit.uxrocket.data.models.local.LogModel
-import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
 import com.napoleonit.uxrocket.data.models.http.*
 import com.napoleonit.uxrocket.data.models.local.GetVariantsModel
 import com.napoleonit.uxrocket.data.models.local.LogCampaignModel
-import com.napoleonit.uxrocket.data.useCases.*
+import com.napoleonit.uxrocket.data.models.local.LogModel
+import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
+import com.napoleonit.uxrocket.data.useCases.GetVariantsUseCase
+import com.napoleonit.uxrocket.data.useCases.SaveRawAppCampaignDataUseCase
+import com.napoleonit.uxrocket.data.useCases.SaveRawAppDataUseCase
 import com.napoleonit.uxrocket.di.DI
 import com.napoleonit.uxrocket.shared.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 
 object UXRocket {
@@ -122,7 +127,7 @@ object UXRocket {
                         totalValue = totalValue,
                         actionName = action.name,
                         parameters = parameters,
-                        variants = Campaign.bindVariantsForRequest(campaign)
+                        variants = campaign.bindVariantsForRequest()
                     )
                     logCampaignEvent(logCampaignModel)
                 }
@@ -167,7 +172,7 @@ object UXRocket {
         activityOrFragmentName: String,
         campaignId: Long,
         parameters: List<AttributeParameter>? = null,
-        variants: Map<String, Long>? = null,
+        variants: Map<String, Long?>? = null,
     ) {
 
         val logCampaignModel = LogCampaignModel(
@@ -202,7 +207,7 @@ object UXRocket {
                             activityOrFragmentName = activityOrFragmentName,
                             campaignId = campaign.id,
                             parameters = parameters,
-                            variants = Campaign.bindVariantsForRequest(campaign),
+                            variants = campaign.bindVariantsForRequest(),
                         )
 
                     }

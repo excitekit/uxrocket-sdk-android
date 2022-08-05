@@ -53,17 +53,18 @@ data class Campaign(
     @SerialName("id") val id: Long,
     @SerialName("variants") val variants: List<Variant>,
     @SerialName("actions") val actions: List<Action>,
-) {
-    companion object {
-        fun bindVariantsForRequest(campaign: Campaign): Map<String, Long> {
-            val variants = HashMap<String, Long>()
-            val sortedVariants = campaign.variants.sortedBy { it.elementID }
-            sortedVariants.forEach { variant ->
-                variants["element_${variant.elementID}"] = variant.id
-            }
-            return variants.toSortedMap(compareBy { it.replace("[^0-9]".toRegex(), "").toInt() })
-        }
+)
+
+fun Campaign.bindVariantsForRequest(): Map<String, Long?> {
+    val variants = HashMap<String, Long?>()
+    val sortedVariants = this.variants.sortedBy { it.elementID }
+    val elementIdsValues = (0..9)
+    elementIdsValues.map { idValue ->
+        val indexIdValue = idValue + 1
+        variants["element_" + if (idValue / 9 != 1) "0${indexIdValue}" else "$indexIdValue"] =
+            sortedVariants.getOrNull(idValue)?.id
     }
+    return variants.toSortedMap(compareBy { it.replace("[^0-9]".toRegex(), "").toInt() })
 }
 
 @Serializable

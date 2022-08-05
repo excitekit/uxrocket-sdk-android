@@ -27,7 +27,7 @@ class LogCampaignModel(
     val itemIdentificator: String? = null,
     val actionName: String? = null,
     val activityOrFragmentName: String,
-    val variants: Map<String, Long> ?= null
+    val variants: Map<String, Long?> ?= null
 ) {
     var capturedDate: String = getCurrentDateString()
         private set

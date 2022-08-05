@@ -11,7 +11,7 @@ data class SaveRawAppCampaignDataRequestModel(
     @SerialName("auth_key") val authKey: String,
     @SerialName("app_rocket_id") val appRocketId: String,
     @SerialName("visitor") val visitor: String,
-    @SerialName("captured_dt") val capturedDt: String,
+    @SerialName("capture_dt") val capturedDt: String,
     @SerialName("os_name") val osName: String,
     @SerialName("os_version") val osVersion: String,
     @SerialName("device_model") val deviceModel: String,
@@ -28,7 +28,7 @@ data class SaveRawAppCampaignDataRequestModel(
     @SerialName("counting_type") val countingType: CountingType,
     @SerialName("total_value") val totalValue: Int? = null,
     @SerialName("params") val params: List<AttributeParameter>? = null,
-    @SerialName("variants") val variants: Map<String, Long>? = null,
+    @SerialName("variants") val variants: Map<String, Long?>? = null,
 ) {
 
     companion object {
