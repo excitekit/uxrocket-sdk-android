@@ -6,7 +6,9 @@ import com.napoleonit.uxrocket.data.models.http.GetVariantsRequestModel
 import com.napoleonit.uxrocket.data.models.http.SaveRawAppCampaignDataRequestModel
 import com.napoleonit.uxrocket.data.models.http.SaveRawAppDataRequestModel
 
-class UXRocketRepositoryImpl(private val api: UXRocketApi) : IUXRocketRepository {
+class UXRocketRepositoryImpl(
+    private val api: UXRocketApi
+    ) : IUXRocketRepository {
     override suspend fun saveRawAppData(model: SaveRawAppDataRequestModel) {
         return api.saveAppRawData(model)
     }

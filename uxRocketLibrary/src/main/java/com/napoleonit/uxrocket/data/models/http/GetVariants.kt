@@ -1,6 +1,7 @@
 package com.napoleonit.uxrocket.data.models.http
 
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
+import com.napoleonit.uxrocket.data.models.local.CountingType
 import com.napoleonit.uxrocket.data.models.local.ElementModel
 import com.napoleonit.uxrocket.data.models.local.ParentElementModel
 import kotlinx.serialization.SerialName
@@ -73,7 +74,7 @@ data class Action(
     @SerialName("name") val name: String,
     @SerialName("item") val item: String,
     @SerialName("action_type") val actionType: Type,
-    @SerialName("counting_type") val countingType: Long,
+    @SerialName("counting_type") val countingType: CountingType,
 ) {
     @Serializable
     enum class Type {

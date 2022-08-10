@@ -4,17 +4,19 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.napoleonit.uxrocket.data.api.UXRocketApi
-import com.napoleonit.uxrocket.data.cache.globalCaching.ICaching
 import com.napoleonit.uxrocket.data.cache.globalCaching.CachingImpl
-import com.napoleonit.uxrocket.data.repository.uxRocketRepository.IUXRocketRepository
-import com.napoleonit.uxrocket.data.repository.uxRocketRepository.UXRocketRepositoryImpl
-import com.napoleonit.uxrocket.data.repository.paramsRepository.ParamsRepositoryImpl
-import com.napoleonit.uxrocket.data.repository.paramsRepository.IParamsRepository
+import com.napoleonit.uxrocket.data.cache.globalCaching.ICaching
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 import com.napoleonit.uxrocket.data.cache.sessionCaching.MetaInfo
-import com.napoleonit.uxrocket.data.useCases.*
+import com.napoleonit.uxrocket.data.repository.paramsRepository.IParamsRepository
+import com.napoleonit.uxrocket.data.repository.paramsRepository.ParamsRepositoryImpl
+import com.napoleonit.uxrocket.data.repository.uxRocketRepository.IUXRocketRepository
+import com.napoleonit.uxrocket.data.repository.uxRocketRepository.UXRocketRepositoryImpl
+import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
+import com.napoleonit.uxrocket.data.useCases.GetVariantsUseCase
+import com.napoleonit.uxrocket.data.useCases.SaveRawAppCampaignDataUseCase
+import com.napoleonit.uxrocket.data.useCases.SaveRawAppDataUseCase
 import com.napoleonit.uxrocket.shared.NetworkState
-import com.napoleonit.uxrocket.shared.ReadAssetsUtil
 import com.napoleonit.uxrocket.shared.UXRocketServer
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -59,7 +61,7 @@ fun getDataModule(appContext: Context, authKey: String, appRocketId: String, ser
     single { SaveRawAppDataUseCase(get(), get(), get(), get()) }
     single { SaveRawAppCampaignDataUseCase(get(), get(), get(), get()) }
     single { CachingParamsUseCase(get()) }
-    single { GetVariantsUseCase(get(), get(), get(), get(), ReadAssetsUtil(appContext)) }//Todo удалить ReadAssetsUtil обьект при релизе
+    single { GetVariantsUseCase(get(), get(), get(), get()) }
 }
 
 fun provideNetworkState(appContext: Context) = NetworkState(appContext)

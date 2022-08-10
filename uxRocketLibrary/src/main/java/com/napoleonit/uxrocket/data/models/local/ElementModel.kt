@@ -1,6 +1,5 @@
 package com.napoleonit.uxrocket.data.models.local
 
-import com.napoleonit.uxrocket.data.models.http.Action
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,6 +17,5 @@ data class ParentElementModel(
 data class ElementModel(
     val id: Long,
     val campaignId: Long,
-    val variantId: Long,
-    var actions: List<Action>? = null
+    val variantId: Long
 )

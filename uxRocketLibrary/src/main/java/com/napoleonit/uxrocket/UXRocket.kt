@@ -6,9 +6,7 @@ import com.napoleonit.uxrocket.data.cache.globalCaching.ICaching
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
 import com.napoleonit.uxrocket.data.models.http.*
-import com.napoleonit.uxrocket.data.models.local.GetVariantsModel
-import com.napoleonit.uxrocket.data.models.local.LogCampaignModel
-import com.napoleonit.uxrocket.data.models.local.LogModel
+import com.napoleonit.uxrocket.data.models.local.*
 import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetVariantsUseCase
 import com.napoleonit.uxrocket.data.useCases.SaveRawAppCampaignDataUseCase
@@ -113,33 +111,30 @@ object UXRocket {
      * Вызывает метод SaveRawAppData (аналог названия LogEvent)
      **/
     fun logCampaignEvent(
+        campaign: Campaign,
+        actionName: String,
         activityOrFragmentName: String,
-        itemIdentificator: String? = null,
         totalValue: Int? = null,
         parameters: List<AttributeParameter>? = null,
     ) {
-        allCampaignInSession.forEach { campaign ->
-            campaign.actions.find { it.item == itemIdentificator }?.let { action ->
-                if (action.actionType == Action.Type.CLICK) {
-                    val logCampaignModel = LogCampaignModel(
-                        activityOrFragmentName = activityOrFragmentName,
-                        itemIdentificator = itemIdentificator,
-                        totalValue = totalValue,
-                        actionName = action.name,
-                        parameters = parameters,
-                        variants = campaign.bindVariantsForRequest()
-                    )
-                    logCampaignEvent(logCampaignModel)
-                }
-            }
-        }
+        val logCampaignModel = LogCampaignModel(
+            activityOrFragmentName = activityOrFragmentName,
+            campaignId = campaign.id,
+            totalValue = totalValue,
+            actionName = actionName,
+            parameters = parameters,
+            variants = campaign.bindVariantsForRequest()
+        )
+        logCampaignEvent(logCampaignModel)
     }
 
     /**
      * Вызывает метод SaveRawCampaignData (аналог названия LogCampaignEvent)
      **/
     private fun logCampaignEvent(logCampaignModel: LogCampaignModel) {
-        val saveRawAppCampaignDataUseCase: SaveRawAppCampaignDataUseCase by inject(SaveRawAppCampaignDataUseCase::class.java)
+        val saveRawAppCampaignDataUseCase: SaveRawAppCampaignDataUseCase by inject(
+            SaveRawAppCampaignDataUseCase::class.java
+        )
         CoroutineScope(Dispatchers.IO).launch {
             saveRawAppCampaignDataUseCase(
                 params = logCampaignModel,
@@ -190,7 +185,11 @@ object UXRocket {
     /**
      * Данный метод вызывает метод GetVariant's
      **/
-    fun getUIConfiguration(activityOrFragmentName: String, parameters: List<AttributeParameter>? = null, callback: (List<Campaign>) -> Unit) {
+    fun getUIConfiguration(
+        activityOrFragmentName: String,
+        parameters: List<AttributeParameter>? = null,
+        callback: (List<Campaign>) -> Unit
+    ) {
         val getVariantsUseCase: GetVariantsUseCase by inject(GetVariantsUseCase::class.java)
         CoroutineScope(Dispatchers.IO).launch {
             val getVariantModel = GetVariantsModel(
@@ -261,11 +260,82 @@ object UXRocket {
      *
      * PS: campaigns элементы разработчик МП получает при вызове метода GetVariant's
      **/
-    fun customizeItems(items: List<View>, campaigns: List<Campaign>) {
+    fun customizeItems(
+        items: List<View>,
+        campaigns: List<Campaign>,
+        activityOrFragmentName: String
+    ) {
+        val cachingRepo: ICaching by inject(ICaching::class.java)
+        val cachedElements = mutableSetOf<ElementModel>()
         campaigns.forEach { campaign ->
-            campaign.variants.forEach { variant ->
+            campaign.variants.mapNotNull { variant ->
                 variant.variantAttrs?.forEach { variantAttr ->
-                    findAndGetViewInItemsById(id = variantAttr.item, items = items)?.customize(variantAttr.attributes)
+                    findAndGetViewInItemsById(id = variantAttr.item, items = items)?.apply {
+                        customize(variantAttr.attributes)
+                        cachedElements.add(
+                            ElementModel(
+                                id = variant.elementID,
+                                campaignId = campaign.id,
+                                variantId = variant.id
+                            )
+                        )
+                    }
+                }
+            }
+        }
+        cachingRepo.cacheElements(
+            activityOrFragmentName = activityOrFragmentName,
+            needCacheElements = cachedElements.toList()
+        )
+        cachedElements.clear()
+    }
+
+    /**
+     * Данный метод позволяет обрабатывать экшены, применять определенные действия к вьюхам
+     */
+
+    fun processActions(
+        items: List<View>,
+        campaigns: List<Campaign>,
+        activityOrFragmentName: String,
+        totalValue: Int? = null,
+        parameters: List<AttributeParameter>?
+    ) {
+        campaigns.forEach { campaign ->
+            campaign.actions.forEach { action ->
+                findAndGetViewInItemsById(id = action.item, items = items)?.let { view ->
+                    if (action.actionType == Action.Type.CLICK && action.countingType == CountingType.COUNTING_PARAMETER) {
+                        view.setOnClickListener {
+                            logEvent(
+                                itemIdentificator = action.item,
+                                itemName = action.name,
+                                event = ContextEvent.BUTTONS
+                            )
+                            val logCampaignModel = LogCampaignModel(
+                                activityOrFragmentName = activityOrFragmentName,
+                                campaignId = campaign.id,
+                                totalValue = totalValue,
+                                actionName = action.name,
+                                parameters = parameters,
+                                variants = campaign.bindVariantsForRequest()
+                            )
+                            logCampaignEvent(logCampaignModel)
+
+                            campaigns.map { campaign ->
+                                campaign.actions.map { action: Action ->
+                                    if (action.countingType == CountingType.COUNTING_PARAMETER_2) {
+                                        logCampaignEvent(
+                                            campaign = campaign,
+                                            actionName = action.name,
+                                            activityOrFragmentName = activityOrFragmentName,
+                                            totalValue = totalValue,
+                                            parameters = parameters
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

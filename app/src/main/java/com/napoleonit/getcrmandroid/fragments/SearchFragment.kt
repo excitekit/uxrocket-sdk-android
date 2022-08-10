@@ -27,18 +27,35 @@ class SearchFragment : Fragment() {
         )
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentSearchBinding.inflate(layoutInflater)
         val params = listOf(AttributeParameter(id = "1", value = "190"))
-
+        val fragmentName = "SearchPage"
+        val screenElements = listOf(
+            binding.editText,
+            binding.textView,
+            binding.imageView,
+            binding.searchByNameButton
+        )
         UXRocket.getUIConfiguration(
             activityOrFragmentName = "SearchPage",
             parameters = params,
             callback = {
-                UXRocket.customizeItems(items = listOf(binding.editText, binding.textView, binding.imageView, binding.searchByNameButton), it)
-                binding.searchByNameButton.setOnClickListener {
-                    UXRocket.logCampaignEvent("SearchPage", "search_by_name_button", totalValue = 1)
-                }
+                UXRocket.customizeItems(
+                    items = screenElements,
+                    campaigns = it,
+                    activityOrFragmentName = fragmentName
+                )
+                UXRocket.processActions(
+                    items = screenElements,
+                    campaigns = it,
+                    activityOrFragmentName = fragmentName,
+                    parameters = params
+                )
             })
 
         return binding.root

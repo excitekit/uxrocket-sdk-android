@@ -32,7 +32,7 @@ interface ICaching {
     /**
      * Variant's element
      **/
-    fun getElementByActivityOrFragmentName(activityOrFragmentName: String): ParentElementModel?
-    fun getElements(): List<ParentElementModel>?
-    fun addElements(activityOrFragmentName: String, elements: List<ElementModel>)
+    fun getElementsByActivityOrFragmentName(activityOrFragmentName: String): ParentElementModel?
+    fun getAllElements(): List<ParentElementModel>?
+    fun cacheElements(needCacheElements: List<ElementModel>, activityOrFragmentName: String)
 }

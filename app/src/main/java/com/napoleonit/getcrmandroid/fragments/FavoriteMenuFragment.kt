@@ -27,36 +27,32 @@ class FavoriteMenuFragment : Fragment() {
         )
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentFavoriteBinding.inflate(layoutInflater)
-
+        val customizingItems = listOf(binding.allFavoriteButton, binding.removeAllFavoriteButton)
         val params = listOf(AttributeParameter(id = "1", value = "190"))
-
+        val fragmentName = "FavoritePage"
         UXRocket.getUIConfiguration(
-            activityOrFragmentName = "FavoritePage",
+            activityOrFragmentName = fragmentName,
             parameters = params,
             callback = {
-                UXRocket.customizeItems(items = listOf(binding.allFavoriteButton, binding.removeAllFavoriteButton), it)
-                binding.allFavoriteButton.setOnClickListener {
-                    UXRocket.logEvent(
-                        itemIdentificator = "all_favorite_button",
-                        itemName = "All favorite button pressed",
-                        event = ContextEvent.BUTTONS
-                    )
-                    UXRocket.logCampaignEvent("FavoritePage", "all_favorite_button", totalValue = 1)
-                }
-
-                binding.removeAllFavoriteButton.setOnClickListener {
-                    UXRocket.logEvent(
-                        itemIdentificator = "remove_all_favorite_button",
-                        itemName = "Remove all favorite button pressed",
-                        event = ContextEvent.BUTTONS
-                    )
-                    UXRocket.logCampaignEvent("FavoritePage", "remove_all_favorite_button", totalValue = 1)
-                }
-            })
-
-
+                UXRocket.customizeItems(
+                    items = customizingItems,
+                    campaigns = it,
+                    activityOrFragmentName = fragmentName
+                )
+                UXRocket.processActions(
+                    items = customizingItems,
+                    campaigns = it,
+                    activityOrFragmentName = fragmentName,
+                    parameters = params
+                )
+            }
+        )
         return binding.root
     }
 }

@@ -8,6 +8,6 @@ import com.napoleonit.uxrocket.data.models.local.ParentElementModel
 
 class GetElementsFromCacheUseCase(private val caching: ICaching) : UseCase<ParentElementModel?, String>() {
     override suspend fun run(params: String): Either<Exception, ParentElementModel?> {
-        return Success(caching.getElementByActivityOrFragmentName(params))
+        return Success(caching.getElementsByActivityOrFragmentName(params))
     }
 }

@@ -92,17 +92,25 @@ private fun TextView.customizeTextView(attributes: List<Attribute>) {
 
                     attribute.value.forEach { gravityType ->
                         when (gravityType) {
-                            GravityAttribute.GravityAttributeValue.LEFT -> left = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.RIGHT -> right = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.TOP -> top = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.BOTTOM -> bottom = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.CENTER -> center = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.CENTER_VERTICAL -> centerVertical = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.CENTER_HORIZONTAL -> centerHorizontal = gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.LEFT -> left =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.RIGHT -> right =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.TOP -> top =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.BOTTOM -> bottom =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.CENTER -> center =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.CENTER_VERTICAL -> centerVertical =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.CENTER_HORIZONTAL -> centerHorizontal =
+                                gravityType.nativeValue
                         }
                     }
 
-                    gravity = top or bottom or right or left or centerHorizontal or centerVertical or center
+                    gravity =
+                        top or bottom or right or left or centerHorizontal or centerVertical or center
                 }
                 is LayoutAttribute -> {
                     val lp = layoutParams
@@ -152,17 +160,25 @@ private fun EditText.customizeEditText(attributes: List<Attribute>) {
 
                     attribute.value.forEach { gravityType ->
                         when (gravityType) {
-                            GravityAttribute.GravityAttributeValue.LEFT -> left = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.RIGHT -> right = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.TOP -> top = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.BOTTOM -> bottom = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.CENTER -> center = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.CENTER_VERTICAL -> centerVertical = gravityType.nativeValue
-                            GravityAttribute.GravityAttributeValue.CENTER_HORIZONTAL -> centerHorizontal = gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.LEFT -> left =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.RIGHT -> right =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.TOP -> top =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.BOTTOM -> bottom =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.CENTER -> center =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.CENTER_VERTICAL -> centerVertical =
+                                gravityType.nativeValue
+                            GravityAttribute.GravityAttributeValue.CENTER_HORIZONTAL -> centerHorizontal =
+                                gravityType.nativeValue
                         }
                     }
 
-                    gravity = top or bottom or right or left or centerHorizontal or centerVertical or center
+                    gravity =
+                        top or bottom or right or left or centerHorizontal or centerVertical or center
                 }
                 is LayoutAttribute -> {
                     val lp = layoutParams

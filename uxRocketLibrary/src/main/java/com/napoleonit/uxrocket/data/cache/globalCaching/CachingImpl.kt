@@ -2,10 +2,10 @@ package com.napoleonit.uxrocket.data.cache.globalCaching
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import com.napoleonit.uxrocket.data.models.local.ParentElementModel
 import com.napoleonit.uxrocket.data.models.local.ElementModel
 import com.napoleonit.uxrocket.data.models.local.LogCampaignModel
 import com.napoleonit.uxrocket.data.models.local.LogModel
+import com.napoleonit.uxrocket.data.models.local.ParentElementModel
 import com.napoleonit.uxrocket.shared.logInfo
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -75,25 +75,27 @@ class CachingImpl(
         "Campaign log cached.".logInfo()
     }
 
+    override fun cacheElements(needCacheElements: List<ElementModel>, activityOrFragmentName: String) {
+        addElements(activityOrFragmentName, needCacheElements)
+    }
+
     override fun removeLogCampaignEventTaskList() {
         "Campaign logs removed from cache.".logInfo()
         sharedPreferences.edit().remove(LOG_CAMPAIGN_EVENT_TASK_LIST).apply()
     }
 
-    override fun getElementByActivityOrFragmentName(activityOrFragmentName: String): ParentElementModel? {
-        return getElements().find { it.activityOrFragmentName == activityOrFragmentName }
+    override fun getElementsByActivityOrFragmentName(activityOrFragmentName: String): ParentElementModel? {
+        return getAllElements().find { it.activityOrFragmentName == activityOrFragmentName }
     }
 
-    override fun getElements(): List<ParentElementModel> {
+    override fun getAllElements(): List<ParentElementModel> {
         val dataJson = sharedPreferences.getString(VARIANTS_ELEMENT_LIST, "")
 
         return if (dataJson.isNullOrEmpty()) emptyList()
         else json.decodeFromString(ListSerializer(ParentElementModel.serializer()), dataJson)
     }
-
-    override fun addElements(activityOrFragmentName: String, elements: List<ElementModel>) {
-        val modifiedList = ArrayList(getElements())
-
+    private fun addElements(activityOrFragmentName: String, elements: List<ElementModel>) {
+        val modifiedList = ArrayList(getAllElements())
         if (modifiedList.isElementExist(activityOrFragmentName)) {
             modifiedList[modifiedList.getElementIndex(activityOrFragmentName)] = ParentElementModel(activityOrFragmentName, elements)
         } else {
@@ -103,7 +105,6 @@ class CachingImpl(
         val dataJson = json.encodeToString(ListSerializer(ParentElementModel.serializer()), modifiedList)
         sharedPreferences.edit().putString(VARIANTS_ELEMENT_LIST, dataJson).apply()
     }
-
     private fun List<ParentElementModel>.isElementExist(ActivityOrFragmentName: String): Boolean {
         return find { it.activityOrFragmentName == ActivityOrFragmentName } != null
     }
