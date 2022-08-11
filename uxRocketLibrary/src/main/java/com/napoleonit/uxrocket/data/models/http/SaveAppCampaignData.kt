@@ -25,7 +25,7 @@ data class SaveRawAppCampaignDataRequestModel(
     @SerialName("country") val country: String? = null,
     @SerialName("campaign_id") val campaignId: Long? = null,
     @SerialName("action_name") val actionName: String? = null,
-    @SerialName("counting_type") val countingType: CountingType,
+    @SerialName("counting_type") val countingType: CountingType?,
     @SerialName("total_value") val totalValue: Int? = null,
     @SerialName("params") val params: List<AttributeParameter>? = null,
     @SerialName("variants") val variants: Map<String, Long?>? = null,

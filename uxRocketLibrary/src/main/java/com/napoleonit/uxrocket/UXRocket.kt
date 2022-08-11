@@ -108,27 +108,6 @@ object UXRocket {
     }
 
     /**
-     * Вызывает метод SaveRawAppData (аналог названия LogEvent)
-     **/
-    fun logCampaignEvent(
-        campaign: Campaign,
-        actionName: String,
-        activityOrFragmentName: String,
-        totalValue: Int? = null,
-        parameters: List<AttributeParameter>? = null,
-    ) {
-        val logCampaignModel = LogCampaignModel(
-            activityOrFragmentName = activityOrFragmentName,
-            campaignId = campaign.id,
-            totalValue = totalValue,
-            actionName = actionName,
-            parameters = parameters,
-            variants = campaign.bindVariantsForRequest()
-        )
-        logCampaignEvent(logCampaignModel)
-    }
-
-    /**
      * Вызывает метод SaveRawCampaignData (аналог названия LogCampaignEvent)
      **/
     private fun logCampaignEvent(logCampaignModel: LogCampaignModel) {
@@ -171,7 +150,7 @@ object UXRocket {
     ) {
 
         val logCampaignModel = LogCampaignModel(
-            actionName = "OpenPage",
+            actionName = "openpage",
             parameters = parameters,
             campaignId = campaignId,
             variants = variants,
@@ -314,10 +293,11 @@ object UXRocket {
                             val logCampaignModel = LogCampaignModel(
                                 activityOrFragmentName = activityOrFragmentName,
                                 campaignId = campaign.id,
-                                totalValue = totalValue,
+                                totalValue = 1,
                                 actionName = action.name,
                                 parameters = parameters,
-                                variants = campaign.bindVariantsForRequest()
+                                variants = campaign.bindVariantsForRequest(),
+                                countingType = CountingType.COUNTING_PARAMETER
                             )
                             logCampaignEvent(logCampaignModel)
 
@@ -325,11 +305,14 @@ object UXRocket {
                                 campaign.actions.map { action: Action ->
                                     if (action.countingType == CountingType.COUNTING_PARAMETER_2) {
                                         logCampaignEvent(
-                                            campaign = campaign,
-                                            actionName = action.name,
-                                            activityOrFragmentName = activityOrFragmentName,
-                                            totalValue = totalValue,
-                                            parameters = parameters
+                                            LogCampaignModel(
+                                                actionName = action.name,
+                                                activityOrFragmentName = activityOrFragmentName,
+                                                totalValue = totalValue ?: 0,
+                                                parameters = parameters,
+                                                variants = campaign.bindVariantsForRequest(),
+                                                countingType = CountingType.COUNTING_PARAMETER_2
+                                            )
                                         )
                                     }
                                 }
