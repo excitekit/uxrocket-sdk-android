@@ -155,6 +155,7 @@ object UXRocket {
             campaignId = campaignId,
             variants = variants,
             activityOrFragmentName = activityOrFragmentName,
+            countingType = CountingType.SHOW
         )
 
         logCampaignEvent(logCampaignModel)
@@ -308,6 +309,7 @@ object UXRocket {
                                             LogCampaignModel(
                                                 actionName = action.name,
                                                 activityOrFragmentName = activityOrFragmentName,
+                                                campaignId = campaign.id,
                                                 totalValue = totalValue ?: 0,
                                                 parameters = parameters,
                                                 variants = campaign.bindVariantsForRequest(),
