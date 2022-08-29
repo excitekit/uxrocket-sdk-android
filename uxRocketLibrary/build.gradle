@@ -6,6 +6,7 @@ plugins {
     id 'maven-publish'
 }
 
+
 ext {
     lifecycleVersion = "2.4.1"
     coroutinesVersion = "1.5.2"
@@ -16,6 +17,49 @@ ext {
     koinFragmentVersion = "2.2.0"
     serializationVersion = "1.4.0-RC"
     dataStoreVersion = "1.0.0"
+}
+
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+
+def getVersionName = { ->
+    return "1.0.0"
+}
+
+def getArtificatId = { ->
+    return "uxRocketLibrary"
+}
+
+publishing {
+    publications {
+        bar(MavenPublication) {
+            groupId 'com.enefce.libraries' // Replace with group ID
+            artifactId getArtificatId()
+            version getVersionName()
+            artifact("$buildDir/outputs/aar/${getArtificatId()}-release.aar")
+        }
+    }
+
+    repositories {
+        maven {
+            name = "uxrocket-sdk-android"
+            /** Configure path of your package repository on Github
+             ** Replace GITHUB_USERID with your/organisation Github userID
+             ** and REPOSITORY with the repository name on GitHub
+             */
+            url = uri("https://maven.pkg.github.com/excitekit/uxrocket-sdk-android")
+            credentials {
+                /** Create github.properties in root project folder file with
+                 ** gpr.usr=GITHUB_USER_ID & gpr.key=PERSONAL_ACCESS_TOKEN
+                 ** Set env variable GPR_USER & GPR_API_KEY if not adding a properties file**/
+
+                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
+                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
+
+                println "GitHubPackages build.gradle\n\tusername=$username\n\ttoken=$password"
+            }
+        }
+    }
 }
 
 android {
@@ -40,13 +84,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-    }
-
-    publishing {
-        singleVariant('release') {
-            withSourcesJar()
-            withJavadocJar()
-        }
     }
 }
 
@@ -90,6 +127,28 @@ dependencies {
     implementation 'io.coil-kt:coil:1.1.1'
 
 }
+
+publishing {
+
+    repositories {
+        maven{
+            name "uxrocket"
+            url "https://github.com/excitekit/uxrocket-sdk-android"
+
+            credentials(PasswordCredentials) {
+                username "martik1995"
+                password "MgM1995A"
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
+    }
+}
+
 kapt {
     correctErrorTypes = true
 }
