@@ -181,7 +181,6 @@ object UXRocket {
                 onSuccess = { campaigns ->
                     insertCampaignsInSession(campaigns)
                     campaigns.forEach { campaign ->
-
                         logCampaignOpenPageEvent(
                             activityOrFragmentName = activityOrFragmentName,
                             campaignId = campaign.id,
@@ -207,6 +206,31 @@ object UXRocket {
                 allCampaignInSession[foundIndex] = campaign
             } else {
                 allCampaignInSession.add(campaign)
+            }
+        }
+    }
+
+    private fun applyCountingTypeTwoAction(
+        campaigns: List<Campaign>,
+        activityOrFragmentName: String,
+        totalValue: Int? = null,
+        parameters: List<AttributeParameter>?
+    ) {
+        campaigns.map { campaign ->
+            campaign.actions.map { action: Action ->
+                if (action.countingType == CountingType.COUNTING_PARAMETER_2) {
+                    logCampaignEvent(
+                        LogCampaignModel(
+                            actionName = action.name,
+                            activityOrFragmentName = activityOrFragmentName,
+                            campaignId = campaign.id,
+                            totalValue = totalValue ?: 0,
+                            parameters = parameters,
+                            variants = campaign.bindVariantsForRequest(),
+                            countingType = CountingType.COUNTING_PARAMETER_2
+                        )
+                    )
+                }
             }
         }
     }
@@ -278,7 +302,7 @@ object UXRocket {
         items: List<View>,
         campaigns: List<Campaign>,
         activityOrFragmentName: String,
-        totalValue: Int? = null,
+        totalValue: (() -> Int?)? = null,
         parameters: List<AttributeParameter>?
     ) {
         campaigns.forEach { campaign ->
@@ -302,23 +326,12 @@ object UXRocket {
                             )
                             logCampaignEvent(logCampaignModel)
 
-                            campaigns.map { campaign ->
-                                campaign.actions.map { action: Action ->
-                                    if (action.countingType == CountingType.COUNTING_PARAMETER_2) {
-                                        logCampaignEvent(
-                                            LogCampaignModel(
-                                                actionName = action.name,
-                                                activityOrFragmentName = activityOrFragmentName,
-                                                campaignId = campaign.id,
-                                                totalValue = totalValue ?: 0,
-                                                parameters = parameters,
-                                                variants = campaign.bindVariantsForRequest(),
-                                                countingType = CountingType.COUNTING_PARAMETER_2
-                                            )
-                                        )
-                                    }
-                                }
-                            }
+                            applyCountingTypeTwoAction(
+                                campaigns = campaigns,
+                                activityOrFragmentName = activityOrFragmentName,
+                                totalValue = totalValue?.invoke(),
+                                parameters = parameters
+                            )
                         }
                     }
                 }

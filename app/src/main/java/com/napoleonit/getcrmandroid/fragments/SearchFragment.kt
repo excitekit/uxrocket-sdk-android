@@ -54,7 +54,10 @@ class SearchFragment : Fragment() {
                     items = screenElements,
                     campaigns = it,
                     activityOrFragmentName = fragmentName,
-                    parameters = params
+                    parameters = params,
+                    totalValue = {
+                        binding.textView.text.toString().toIntOrNull()
+                    }
                 )
             })
 
