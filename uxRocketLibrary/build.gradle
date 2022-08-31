@@ -6,7 +6,6 @@ plugins {
     id 'maven-publish'
 }
 
-
 ext {
     lifecycleVersion = "2.4.1"
     coroutinesVersion = "1.5.2"
@@ -26,38 +25,63 @@ def getVersionName = { ->
     return "1.0.0"
 }
 
+def getGroupId = { ->
+    return "com.github.martik1995"
+}
+
 def getArtificatId = { ->
     return "uxRocketLibrary"
 }
 
 publishing {
-    publications {
-        bar(MavenPublication) {
-            groupId 'com.enefce.libraries' // Replace with group ID
-            artifactId getArtificatId()
-            version getVersionName()
-            artifact("$buildDir/outputs/aar/${getArtificatId()}-release.aar")
-        }
-    }
-
     repositories {
         maven {
-            name = "uxrocket-sdk-android"
-            /** Configure path of your package repository on Github
-             ** Replace GITHUB_USERID with your/organisation Github userID
-             ** and REPOSITORY with the repository name on GitHub
-             */
-            url = uri("https://maven.pkg.github.com/excitekit/uxrocket-sdk-android")
+            name = "LibPackages"
+            url = uri("https://github.com/Martik1995/temp")
             credentials {
-                /** Create github.properties in root project folder file with
-                 ** gpr.usr=GITHUB_USER_ID & gpr.key=PERSONAL_ACCESS_TOKEN
-                 ** Set env variable GPR_USER & GPR_API_KEY if not adding a properties file**/
-
                 username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
                 password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
 
                 println "GitHubPackages build.gradle\n\tusername=$username\n\ttoken=$password"
             }
+        }
+    }
+
+    publications {
+        bar(MavenPublication) {
+            groupId getGroupId()
+            artifactId getArtificatId()
+            version getVersionName()
+            artifact("$buildDir/outputs/aar/${getArtificatId()}-release.aar")
+            //generate .pom file with transitive dependencies
+
+            pom.withXml {
+                final dependenciesNode = asNode().appendNode('dependencies')
+                ext.addDependency = { Dependency dep, String scope ->
+                    if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
+                        return
+                    final dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', dep.group)
+                    dependencyNode.appendNode('artifactId', dep.name)
+                    dependencyNode.appendNode('version', dep.version)
+                    dependencyNode.appendNode('scope', scope)
+                    if (!dep.transitive) {
+                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                        exclusionNode.appendNode('groupId', '*')
+                        exclusionNode.appendNode('artifactId', '*')
+                    } else if (!dep.properties.excludeRules.empty) {
+                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                        dep.properties.excludeRules.each { ExcludeRule rule ->
+                            exclusionNode.appendNode('groupId', rule.group ?: '*')
+                            exclusionNode.appendNode('artifactId', rule.module ?: '*')
+                        }
+                    }
+                }
+                configurations.implementation.getDependencies().each { dep -> addDependency(dep, "compile") }
+                configurations.api.getDependencies().each { dep -> addDependency(dep, "compile") }
+                configurations.implementation.getDependencies().each { dep -> addDependency(dep, "runtime") }
+            }
+
         }
     }
 }
@@ -89,64 +113,38 @@ android {
 
 dependencies {
 
-    implementation 'joda-time:joda-time:2.10.14'
-    implementation 'androidx.core:core-ktx:1.8.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
+    api 'joda-time:joda-time:2.10.14'
+    api 'androidx.core:core-ktx:1.8.0'
 
     //Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
     // Koin for Android
-    implementation "io.insert-koin:koin-core:$koinVersion"
-    implementation "io.insert-koin:koin-android:$koinVersion"
+    api "io.insert-koin:koin-core:$koinVersion"
+    api "io.insert-koin:koin-android:$koinVersion"
 
     //Retrofit2
-    implementation "com.squareup.retrofit2:retrofit:$retrofit2Version"
-    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
+    api "com.squareup.retrofit2:retrofit:$retrofit2Version"
+    api "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
 
     //Serialization
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion"
+    api "org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion"
 
     //OkHttp3
-    implementation "com.squareup.okhttp3:okhttp:$okhttp3Version"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3Version"
+    api "com.squareup.okhttp3:okhttp:$okhttp3Version"
+    api "com.squareup.okhttp3:logging-interceptor:$okhttp3Version"
 
     //Annotation
-    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    api 'javax.annotation:javax.annotation-api:1.3.2'
 
     //Room
-    implementation "androidx.room:room-runtime:$roomVersion"
-    implementation "androidx.room:room-ktx:$roomVersion"
+    api "androidx.room:room-runtime:$roomVersion"
+    api "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
 
     //Coil
-    implementation 'io.coil-kt:coil:1.1.1'
-
-}
-
-publishing {
-
-    repositories {
-        maven{
-            name "uxrocket"
-            url "https://github.com/excitekit/uxrocket-sdk-android"
-
-            credentials(PasswordCredentials) {
-                username "martik1995"
-                password "MgM1995A"
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            url "$buildDir/repo"
-        }
-    }
+    api 'io.coil-kt:coil:1.1.1'
 }
 
 kapt {
