@@ -83,7 +83,7 @@ def githubProperties = new Properties()
 githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
 
 def getVersionName = { ->
-    return "1.0.2" // Replace with version Name
+    return "1.0.3" // Replace with version Name
 }
 
 publishing {
@@ -91,7 +91,7 @@ publishing {
         bar(MavenPublication) {
             groupId 'com.uxrocket'
             version getVersionName()
-            artifact("$buildDir/outputs/aar/uxrocket-sdk-android-release.aar")
+            artifact("$buildDir/outputs/aar/uxRocketLibrary-release.aar")
             artifactId "android-sdk"
 
             pom.withXml {

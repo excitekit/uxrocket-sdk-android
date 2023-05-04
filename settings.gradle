@@ -8,4 +8,4 @@ pluginManagement {
 
 rootProject.name = "GetCRMAndroid"
 include ':app'
-include ':uxrocket-sdk-android'
+include ':uxRocketLibrary'
