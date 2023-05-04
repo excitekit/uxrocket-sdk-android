@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">UXRocket Test App</string>
+    <string name="checkout">Оформить заказ</string>
 </resources>

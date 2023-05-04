@@ -15,4 +15,14 @@
         android:icon="@drawable/ic_nav_favorite"
         android:title="Favorites" />
 
+    <item
+        android:id="@+id/nav_cart_button"
+        android:icon="@drawable/ic_nav_card"
+        android:title="Shoping Card" />
+
+    <item
+        android:id="@+id/nav_identity_button"
+        android:icon="@drawable/ic_nav_identity"
+        android:title="Identity" />
+
 </menu>
