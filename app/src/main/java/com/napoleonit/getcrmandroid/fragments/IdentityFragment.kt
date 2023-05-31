@@ -14,7 +14,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.napoleonit.getcrmandroid.R
 import com.napoleonit.uxrocket.UXRocket
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 import com.napoleonit.uxrocket.data.models.local.LogIdentityModel
 
 class IdentityFragment : Fragment() {
@@ -28,7 +27,7 @@ class IdentityFragment : Fragment() {
         UXRocket.logEvent(
             itemIdentificator = "IdentityPage",
             itemName = "Identity page",
-            event = ContextEvent.OPEN_PAGE
+            event = "openpage"
         )
     }
     // Список товаров в корзине

@@ -62,7 +62,7 @@ object UXRocket {
             logEvent(
                 itemIdentificator = "",
                 itemName = "UXRocket installed",
-                event = ContextEvent.INSTALL
+                event = "install"
             )
     }
 
@@ -73,7 +73,7 @@ object UXRocket {
     fun logEvent(
         itemIdentificator: String,
         itemName: String,
-        event: ContextEvent,
+        event: String,
         parameters: List<AttributeParameter>? = null,
         cartSum: Double? = null,
         productCount: Int? = null,
@@ -349,7 +349,7 @@ object UXRocket {
                             logEvent(
                                 itemIdentificator = action.item,
                                 itemName = action.name,
-                                event = ContextEvent.BUTTONS
+                                event = "buttons"
                             )
                             val logCampaignModel = LogCampaignModel(
                                 activityOrFragmentName = activityOrFragmentName,

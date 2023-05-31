@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.napoleonit.getcrmandroid.R
 import com.napoleonit.uxrocket.UXRocket
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 
 
 class CartFragment : Fragment() {
@@ -26,7 +25,7 @@ class CartFragment : Fragment() {
         UXRocket.logEvent(
             itemIdentificator = "CardPage",
             itemName = "Card page",
-            event = ContextEvent.OPEN_PAGE
+            event = "openpage"
         )
     }
     // Список товаров в корзине
@@ -73,7 +72,7 @@ class CartFragment : Fragment() {
         UXRocket.logEvent(
             itemIdentificator = "checkout_button",
             itemName = "checkout_button pressed",
-            event = ContextEvent.BUTTONS,
+            event = "buttons",
             cartSum = cartItems.sumOf { item: Item -> item.price},
             productCode = "All Items",
             productCount = cartItems.count(),
@@ -97,7 +96,7 @@ class CartFragment : Fragment() {
         UXRocket.logEvent(
             itemIdentificator = "add_item_button",
             itemName = "add_item_button pressed",
-            event = ContextEvent.BUTTONS,
+            event = "buttons",
             cartSum = cartItems.sumOf { item: Item -> item.price},
             productCode = newItem.name,
             productCount = countItems,

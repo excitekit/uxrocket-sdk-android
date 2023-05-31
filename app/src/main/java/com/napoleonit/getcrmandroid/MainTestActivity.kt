@@ -12,7 +12,6 @@ import com.napoleonit.getcrmandroid.fragments.HomeFragment
 import com.napoleonit.getcrmandroid.fragments.IdentityFragment
 import com.napoleonit.getcrmandroid.fragments.SearchFragment
 import com.napoleonit.uxrocket.UXRocket
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 
 class MainTestActivity : AppCompatActivity() {
 
@@ -50,7 +49,7 @@ class MainTestActivity : AppCompatActivity() {
                             UXRocket.logEvent(
                                 itemIdentificator = "nav_home_button",
                                 itemName = "Nav home button pressed",
-                                event = ContextEvent.MAIN_MENU
+                                event = "mainmenu"
                             )
                         }else {
                             ignoreHomepageLog = false
@@ -65,7 +64,7 @@ class MainTestActivity : AppCompatActivity() {
                         UXRocket.logEvent(
                             itemIdentificator = "nav_search_button",
                             itemName = "Nav search button pressed",
-                            event = ContextEvent.MAIN_MENU
+                            event = "mainmenu"
                         )
                     }
                 }
@@ -77,7 +76,7 @@ class MainTestActivity : AppCompatActivity() {
                         UXRocket.logEvent(
                             itemIdentificator = "nav_favorite_button",
                             itemName = "Nav favorite button pressed",
-                            event = ContextEvent.MAIN_MENU
+                            event = "mainmenu"
                         )
                     }
                 }
@@ -89,7 +88,7 @@ class MainTestActivity : AppCompatActivity() {
                         UXRocket.logEvent(
                             itemIdentificator = "nav_cart_button",
                             itemName = "Nav card button pressed",
-                            event = ContextEvent.MAIN_MENU
+                            event = "mainmenu"
                         )
                     }
                 }
@@ -101,7 +100,7 @@ class MainTestActivity : AppCompatActivity() {
                         UXRocket.logEvent(
                             itemIdentificator = "nav_identity_button",
                             itemName = "Nav identity button pressed",
-                            event = ContextEvent.MAIN_MENU
+                            event = "mainmenu"
                         )
                     }
                 }

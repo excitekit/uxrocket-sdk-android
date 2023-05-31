@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.napoleonit.getcrmandroid.databinding.FragmentSearchBinding
 import com.napoleonit.uxrocket.UXRocket
 import com.napoleonit.uxrocket.data.models.http.AttributeParameter
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 
 class SearchFragment : Fragment() {
     companion object {
@@ -23,7 +22,7 @@ class SearchFragment : Fragment() {
         UXRocket.logEvent(
             itemIdentificator = "SearchPage",
             itemName = "Search page",
-            event = ContextEvent.OPEN_PAGE
+            event = "openpage"
         )
     }
 

@@ -9,7 +9,6 @@ import com.napoleonit.uxrocket.data.models.http.SaveRawAppDataRequestModel
 import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.data.repository.uxRocketRepository.IUXRocketRepository
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 import com.napoleonit.uxrocket.data.repository.paramsRepository.IParamsRepository
 import com.napoleonit.uxrocket.shared.logError
 import com.napoleonit.uxrocket.shared.logInfo
@@ -29,7 +28,7 @@ class SaveRawAppDataUseCase(
 
             //Если event == INSTALL, мы будем хранить стейт для того чтобы
             //каждый раз при запуске приложения не вызывался автономно данный метод.
-            val needCacheInstallEventState = params.event == ContextEvent.INSTALL
+            val needCacheInstallEventState = params.event == "install"
 
             //Если разработчик передал пустой список параметров,
             // то мы берем список из кэша (если были ранее сохраннены)

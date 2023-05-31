@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.napoleonit.getcrmandroid.databinding.FragmentFavoriteBinding
 import com.napoleonit.uxrocket.UXRocket
 import com.napoleonit.uxrocket.data.models.http.AttributeParameter
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 
 class FavoriteMenuFragment : Fragment() {
     companion object {
@@ -23,7 +22,7 @@ class FavoriteMenuFragment : Fragment() {
         UXRocket.logEvent(
             itemIdentificator = "FavoritePage",
             itemName = "Favorite page",
-            event = ContextEvent.OPEN_PAGE
+            event = "openpage"
         )
     }
 

@@ -1,7 +1,6 @@
 package com.napoleonit.uxrocket.data.models.local
 
 import com.napoleonit.uxrocket.data.models.http.AttributeParameter
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 import com.napoleonit.uxrocket.shared.getCurrentDateString
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -10,7 +9,7 @@ import kotlinx.serialization.Serializable
 class LogModel(
     val item: String,
     val itemName: String,
-    val event: ContextEvent,
+    val event: String,
     var parameters: List<AttributeParameter>? = null
 ) {
     var cartSum: Double? = null

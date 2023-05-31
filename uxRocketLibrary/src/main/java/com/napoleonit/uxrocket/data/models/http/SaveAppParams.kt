@@ -25,7 +25,7 @@ data class SaveRawAppDataRequestModel(
     @SerialName("resolution") val resolution: String? = null,
     @SerialName("city") val city: String? = null,
     @SerialName("country") val country: String? = null,
-    @SerialName("event_context") val eventContext: ContextEvent? = null,
+    @SerialName("event_context") val eventContext: String? = null,
     @SerialName("visitor") val visitor: String,
     @SerialName("product_code") val productCode: String? = null,
     @SerialName("product_price") val productPrice: Double? = null,
@@ -74,32 +74,3 @@ class AttributeParameter(
     @SerialName("id") val id: String,
     @SerialName("value") val value: String
 )
-
-
-@Serializable
-enum class ContextEvent {
-    @SerialName("install")
-    INSTALL,
-
-    @SerialName("openpage")
-    OPEN_PAGE,
-
-    @SerialName("mainmenu")
-    MAIN_MENU,
-
-    @SerialName("buttons")
-    BUTTONS,
-
-    @SerialName("popup")
-    POPUP,
-
-    @SerialName("links")
-    LINKS,
-
-    @SerialName("input")
-    INPUT;
-
-    override fun toString(): String {
-        return this.name.lowercase()
-    }
-}

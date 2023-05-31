@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.napoleonit.getcrmandroid.databinding.FragmentHomeBinding
 import com.napoleonit.uxrocket.UXRocket
 import com.napoleonit.uxrocket.data.models.http.AttributeParameter
-import com.napoleonit.uxrocket.data.models.http.ContextEvent
 
 class HomeFragment : Fragment() {
     companion object {
@@ -23,7 +22,7 @@ class HomeFragment : Fragment() {
         UXRocket.logEvent(
             itemIdentificator = "HomePage",
             itemName = "Home page",
-            event = ContextEvent.OPEN_PAGE,
+            event = "openpage",
             parameters = listOf(
                 AttributeParameter("1", value = "Value sample 1"),
                 AttributeParameter("7", value = "Value sample 2")
