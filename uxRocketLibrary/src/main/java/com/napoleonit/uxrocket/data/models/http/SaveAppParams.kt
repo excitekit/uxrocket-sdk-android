@@ -32,7 +32,8 @@ data class SaveRawAppDataRequestModel(
     @SerialName("product_count") val productCount: Int? = null,
     @SerialName("cart_sum") val cartSum: Double? = null,
     @SerialName("session_id") val session: String,
-    @SerialName("params") val params: List<AttributeParameter>? = null
+    @SerialName("params") val params: List<AttributeParameter>? = null,
+    @SerialName("referrer") val referrer: String?  = null
 ) {
     companion object {
         fun bindRequestModel(
@@ -50,6 +51,7 @@ data class SaveRawAppDataRequestModel(
             appPackageName = metaInfo.appPackageName,
             deviceType = metaInfo.deviceType,
             city = metaInfo.city,
+            referrer = metaInfo.referrer,
             country = metaInfo.country,
             operatorName = metaInfo.operatorName,
             resolution = metaInfo.resolution,

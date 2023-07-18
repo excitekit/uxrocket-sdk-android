@@ -1,25 +1,51 @@
 package com.napoleonit.uxrocket
 
+import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.ContextWrapper
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.android.installreferrer.api.InstallReferrerClient
+import com.android.installreferrer.api.InstallReferrerStateListener
+import com.android.installreferrer.api.ReferrerDetails
 import com.napoleonit.uxrocket.data.cache.globalCaching.ICaching
 import com.napoleonit.uxrocket.data.cache.sessionCaching.IMetaInfo
 import com.napoleonit.uxrocket.data.exceptions.BaseUXRocketApiException
-import com.napoleonit.uxrocket.data.models.http.*
-import com.napoleonit.uxrocket.data.models.local.*
+import com.napoleonit.uxrocket.data.models.http.Action
+import com.napoleonit.uxrocket.data.models.http.AttributeParameter
+import com.napoleonit.uxrocket.data.models.http.Campaign
+import com.napoleonit.uxrocket.data.models.http.bindVariantsForRequest
+import com.napoleonit.uxrocket.data.models.local.CountingType
+import com.napoleonit.uxrocket.data.models.local.ElementModel
+import com.napoleonit.uxrocket.data.models.local.GetVariantsModel
+import com.napoleonit.uxrocket.data.models.local.LogCampaignModel
+import com.napoleonit.uxrocket.data.models.local.LogIdentityModel
+import com.napoleonit.uxrocket.data.models.local.LogModel
 import com.napoleonit.uxrocket.data.useCases.CachingParamsUseCase
 import com.napoleonit.uxrocket.data.useCases.GetVariantsUseCase
 import com.napoleonit.uxrocket.data.useCases.SaveIdentityMatchUseCase
 import com.napoleonit.uxrocket.data.useCases.SaveRawAppCampaignDataUseCase
 import com.napoleonit.uxrocket.data.useCases.SaveRawAppDataUseCase
 import com.napoleonit.uxrocket.di.DI
-import com.napoleonit.uxrocket.shared.*
+import com.napoleonit.uxrocket.shared.UXRocketServer
+import com.napoleonit.uxrocket.shared.customize
+import com.napoleonit.uxrocket.shared.findAndGetViewInItemsById
+import com.napoleonit.uxrocket.shared.logError
+import com.napoleonit.uxrocket.shared.logInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 
+
 object UXRocket {
+
+    private lateinit var referrerClient: InstallReferrerClient
 
     private val allCampaignInSession = ArrayList<Campaign>()
 
@@ -47,6 +73,8 @@ object UXRocket {
         appRocketId: String,
         serverEnvironment: UXRocketServer,
     ) {
+
+        initTracking(appContext)
         DI.configure(
             appContext = appContext,
             authKey = authKey,
@@ -66,6 +94,24 @@ object UXRocket {
             )
     }
 
+    private fun initTracking(appContext: Context) {
+        val referrerClient = InstallReferrerClient.newBuilder(appContext).build()
+        referrerClient.startConnection(object : InstallReferrerStateListener {
+
+            override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                when (responseCode) {
+                    InstallReferrerClient.InstallReferrerResponse.OK -> {
+                        val response: ReferrerDetails = referrerClient.installReferrer
+                        setReferrer(response)
+                        referrerClient.endConnection()
+                    }
+                }
+            }
+
+            override fun onInstallReferrerServiceDisconnected() {
+            }
+        })
+    }
 
     /**
      * Вызывает метод SaveRawAppData (аналог названия LogEvent)
@@ -269,6 +315,21 @@ object UXRocket {
                 }
             }
         }
+    }
+
+    /**
+     * Данный метод сохраняет поле referrer
+     */
+    private fun setReferrer(referrer: ReferrerDetails) {
+        val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)
+        val installReferrer: String = referrer.installReferrer
+        val clickTimestamp: Long = referrer.referrerClickTimestampSeconds
+        val installBeginTimestamp: Long = referrer.installBeginTimestampSeconds
+        val version = referrer.installVersion
+        val googlePlayInstantParam = referrer.googlePlayInstantParam
+
+        val referrerDetailsStr = ("$installReferrer&click_timestamp=$clickTimestamp&install_begin_timestamp=$installBeginTimestamp&version=$version&google_play_instant_param=$googlePlayInstantParam")
+        metaInfo.setReferrerUrl(referrer = referrerDetailsStr)
     }
 
     /**

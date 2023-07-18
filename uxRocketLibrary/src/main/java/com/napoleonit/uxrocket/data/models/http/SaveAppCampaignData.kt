@@ -30,6 +30,7 @@ data class SaveRawAppCampaignDataRequestModel(
     @SerialName("total_value") val totalValue: Int? = null,
     @SerialName("params") val params: List<AttributeParameter>? = null,
     @SerialName("variants") val variants: Map<String, Long?>? = null,
+    @SerialName("referrer") val referrer: String? = null,
 ) {
 
     companion object {
@@ -47,6 +48,7 @@ data class SaveRawAppCampaignDataRequestModel(
             appPackageName = metaInfo.appPackageName,
             deviceType = metaInfo.deviceType,
             city = metaInfo.city,
+            referrer = metaInfo.referrer,
             country = metaInfo.country,
             resolution = metaInfo.resolution,
             visitor = metaInfo.visitor,

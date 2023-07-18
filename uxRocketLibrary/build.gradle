@@ -73,6 +73,7 @@ dependencies {
     //Room
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
+    implementation 'com.android.installreferrer:installreferrer:2.2'
     kapt "androidx.room:room-compiler:$roomVersion"
 
     //Coil
@@ -83,7 +84,7 @@ def githubProperties = new Properties()
 githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
 
 def getVersionName = { ->
-    return "1.0.5" // Replace with version Name
+    return "1.0.6" // Replace with version Name
 }
 
 publishing {

@@ -38,9 +38,15 @@ class MetaInfo(
      */
     override var country: String? = null
     override var city: String? = null
+    override var referrer: String? = null
+
     override fun setCountryAndCity(country: String, city: String) {
         this.country = country
         this.city = city
+    }
+
+    override fun setReferrerUrl(referrer: String) {
+        this.referrer = referrer
     }
 }
 

@@ -25,6 +25,7 @@ data class GetVariantsRequestModel(
     @SerialName("visitor") val visitor: String,
     @SerialName("params") val params: List<AttributeParameter>? = null,
     @SerialName("elements") val elements: List<ElementModel>? = null,
+    @SerialName("referrer") val referrer: String? = null
 ) {
     companion object {
         fun bindRequestModel(
@@ -42,6 +43,7 @@ data class GetVariantsRequestModel(
             deviceType = metaInfo.deviceType,
             operatorName = metaInfo.operatorName,
             city = metaInfo.city,
+            referrer = metaInfo.referrer,
             country = metaInfo.country,
             resolution = metaInfo.resolution,
             session = metaInfo.session,

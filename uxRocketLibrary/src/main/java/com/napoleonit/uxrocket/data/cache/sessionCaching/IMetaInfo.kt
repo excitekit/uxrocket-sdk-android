@@ -18,6 +18,8 @@ interface IMetaInfo {
     val session: String
     var country: String?
     var city: String?
+    var referrer: String?
 
     fun setCountryAndCity(country: String, city: String)
+    fun setReferrerUrl(referrer: String)
 }
