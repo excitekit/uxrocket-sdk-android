@@ -16,10 +16,14 @@ interface IMetaInfo {
     val resolution: String
     val visitor: String
     val session: String
+    val timeZoneName: String
+    val timeZoneShift: Double
+    val advertisingId: String?
     var country: String?
     var city: String?
     var referrer: String?
 
     fun setCountryAndCity(country: String, city: String)
     fun setReferrerUrl(referrer: String)
+    fun setAdvertising(advertisingId: String)
 }

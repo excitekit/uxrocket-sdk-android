@@ -32,6 +32,8 @@ class MetaInfo(
     override val visitor: String get() = convertDeviceIdToMD5(deviceID)
     override val session: String = UUID.randomUUID().toString()
     override val operatorName: String? = getOperatorName(appContext)
+    override val timeZoneName: String = getTimeZoneName()
+    override val timeZoneShift: Double = getTimeZoneShift()
 
     /**
      * Оптиональные параметры
@@ -39,7 +41,7 @@ class MetaInfo(
     override var country: String? = null
     override var city: String? = null
     override var referrer: String? = null
-
+    override var advertisingId: String? = getAdvertisingId(appContext)
     override fun setCountryAndCity(country: String, city: String) {
         this.country = country
         this.city = city
@@ -48,6 +50,15 @@ class MetaInfo(
     override fun setReferrerUrl(referrer: String) {
         this.referrer = referrer
     }
+    override fun setAdvertising(advertisingId: String) {
+        this.advertisingId = advertisingId;
+    }
+}
+
+private fun getAdvertisingId(context: Context) : String? {
+    val sharedPreferences = context.getSharedPreferences("AdvertisingPrefs", Context.MODE_PRIVATE)
+    var gaid = sharedPreferences.getString("GAID", null);
+    return gaid
 }
 
 private fun getDeviceName(): String {
@@ -60,6 +71,15 @@ private fun getDeviceName(): String {
 
 private fun getOSVersion(): String {
     return Build.VERSION.SDK_INT.toString()
+}
+
+private fun getTimeZoneName(): String{
+    return TimeZone.getDefault().displayName
+}
+
+private fun getTimeZoneShift(): Double{
+    val timeZone = TimeZone.getDefault()
+    return timeZone.getOffset(System.currentTimeMillis()) / (60.0 * 60.0 * 1000.0)
 }
 
 private fun getLocale(): String {

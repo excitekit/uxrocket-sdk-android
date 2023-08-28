@@ -33,7 +33,10 @@ data class SaveRawAppDataRequestModel(
     @SerialName("cart_sum") val cartSum: Double? = null,
     @SerialName("session_id") val session: String,
     @SerialName("params") val params: List<AttributeParameter>? = null,
-    @SerialName("referrer") val referrer: String?  = null
+    @SerialName("referrer") val referrer: String?  = null,
+    @SerialName("advertising_id") val advertisingId: String?  = null,
+    @SerialName("time_zone_shift") val timeZoneShift: Double?  = null,
+    @SerialName("time_zone_name") val timeZoneName: String?  = null,
 ) {
     companion object {
         fun bindRequestModel(
@@ -51,7 +54,10 @@ data class SaveRawAppDataRequestModel(
             appPackageName = metaInfo.appPackageName,
             deviceType = metaInfo.deviceType,
             city = metaInfo.city,
+            timeZoneName = metaInfo.timeZoneName,
+            timeZoneShift = metaInfo.timeZoneShift,
             referrer = metaInfo.referrer,
+            advertisingId = metaInfo.advertisingId,
             country = metaInfo.country,
             operatorName = metaInfo.operatorName,
             resolution = metaInfo.resolution,

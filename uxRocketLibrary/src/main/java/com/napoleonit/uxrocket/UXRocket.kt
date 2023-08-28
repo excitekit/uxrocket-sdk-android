@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.os.AsyncTask
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -41,7 +42,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
-
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.common.GooglePlayServicesRepairableException
+import java.io.IOException
+import java.util.concurrent.CountDownLatch
 
 object UXRocket {
 
@@ -72,8 +78,12 @@ object UXRocket {
         authKey: String,
         appRocketId: String,
         serverEnvironment: UXRocketServer,
+        getAdvertisingId: Boolean? = false
     ) {
 
+        if(getAdvertisingId == true) {
+            setAdvertisingIdWithPrefs(appContext)
+        }
         initTracking(appContext)
         DI.configure(
             appContext = appContext,
@@ -333,7 +343,72 @@ object UXRocket {
     }
 
     /**
+     * Данный метод сохраняет поле AdvertisingId
+     */
+    private fun setAdvertisingId(context: Context) {
+        try {
+            val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)
+            object : AsyncTask<Void?, Void?, String>() {
+                override fun doInBackground(vararg params: Void?): String {
+                    try {
+                        val adInfo: Info = AdvertisingIdClient.getAdvertisingIdInfo(context)
+                        return adInfo.getId()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: GooglePlayServicesNotAvailableException) {
+                        e.printStackTrace()
+                    } catch (e: GooglePlayServicesRepairableException) {
+                        e.printStackTrace()
+                    }
+                    return ""
+                }
+
+                override fun onPostExecute(adId: String) {
+                }
+            }.execute()
+        } catch (e: Exception) {
+            e.logError()
+        }
+    }
+
+    private fun setAdvertisingIdWithPrefs(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("AdvertisingPrefs", Context.MODE_PRIVATE)
+        var gaid = sharedPreferences.getString("GAID", null)
+        val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)
+
+        try {
+            val editor = sharedPreferences.edit()
+            object : AsyncTask<Void?, Void?, String>() {
+                override fun doInBackground(vararg params: Void?): String {
+                    try {
+                        val adInfo: Info = AdvertisingIdClient.getAdvertisingIdInfo(context)
+                        return adInfo.getId()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: GooglePlayServicesNotAvailableException) {
+                        e.printStackTrace()
+                    } catch (e: GooglePlayServicesRepairableException) {
+                        e.printStackTrace()
+                    }
+                    return ""
+                }
+
+                override fun onPostExecute(adId: String) {
+                    if (!adId.isNullOrEmpty() && gaid != adId) {
+                        metaInfo.setAdvertising(adId);
+                        editor.putString("GAID", adId)
+                        editor.apply()
+                    }
+                }
+            }.execute()
+        } catch (e: Exception) {
+            e.logError()
+        }
+    }
+
+    /**
      * Данный метод сохраняет поля country и city для запросов LogEvent
+     * 646134f5-010c-43bc-916e-05a63f7c9190
      */
     fun setCountryAndCity(country: String, city: String) {
         val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)

@@ -78,6 +78,9 @@ dependencies {
 
     //Coil
     implementation 'io.coil-kt:coil:1.1.1'
+
+    //AdvertisingIdClient
+    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
 }
 
 def githubProperties = new Properties()
