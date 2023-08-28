@@ -25,5 +25,5 @@ interface IMetaInfo {
 
     fun setCountryAndCity(country: String, city: String)
     fun setReferrerUrl(referrer: String)
-    fun setAdvertising(advertisingId: String)
+    fun setAdvertising(advertisingId: String?)
 }

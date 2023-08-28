@@ -50,7 +50,7 @@ class MetaInfo(
     override fun setReferrerUrl(referrer: String) {
         this.referrer = referrer
     }
-    override fun setAdvertising(advertisingId: String) {
+    override fun setAdvertising(advertisingId: String?) {
         this.advertisingId = advertisingId;
     }
 }

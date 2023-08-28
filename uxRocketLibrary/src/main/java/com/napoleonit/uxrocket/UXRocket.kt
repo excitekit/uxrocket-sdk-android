@@ -1,16 +1,8 @@
 package com.napoleonit.uxrocket
 
-import android.Manifest
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.view.View
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.android.installreferrer.api.ReferrerDetails
@@ -47,7 +39,6 @@ import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import java.io.IOException
-import java.util.concurrent.CountDownLatch
 
 object UXRocket {
 
@@ -78,12 +69,11 @@ object UXRocket {
         authKey: String,
         appRocketId: String,
         serverEnvironment: UXRocketServer,
-        getAdvertisingId: Boolean? = false
+        getAdvertisingId: Boolean = false
     ) {
 
-        if(getAdvertisingId == true) {
-            setAdvertisingIdWithPrefs(appContext)
-        }
+        setAdvertisingIdWithPrefs(appContext, getAdvertisingId)
+
         initTracking(appContext)
         DI.configure(
             appContext = appContext,
@@ -345,39 +335,18 @@ object UXRocket {
     /**
      * Данный метод сохраняет поле AdvertisingId
      */
-    private fun setAdvertisingId(context: Context) {
-        try {
-            val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)
-            object : AsyncTask<Void?, Void?, String>() {
-                override fun doInBackground(vararg params: Void?): String {
-                    try {
-                        val adInfo: Info = AdvertisingIdClient.getAdvertisingIdInfo(context)
-                        return adInfo.getId()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    } catch (e: GooglePlayServicesNotAvailableException) {
-                        e.printStackTrace()
-                    } catch (e: GooglePlayServicesRepairableException) {
-                        e.printStackTrace()
-                    }
-                    return ""
-                }
-
-                override fun onPostExecute(adId: String) {
-                }
-            }.execute()
-        } catch (e: Exception) {
-            e.logError()
-        }
-    }
-
-    private fun setAdvertisingIdWithPrefs(context: Context) {
+    private fun setAdvertisingIdWithPrefs(context: Context, getAdvertisingId: Boolean = false) {
         val sharedPreferences = context.getSharedPreferences("AdvertisingPrefs", Context.MODE_PRIVATE)
         var gaid = sharedPreferences.getString("GAID", null)
         val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)
-
+        val editor = sharedPreferences.edit()
+        if(!getAdvertisingId) {
+            metaInfo.setAdvertising(null);
+            editor.putString("GAID", null)
+            editor.apply()
+            return;
+        }
         try {
-            val editor = sharedPreferences.edit()
             object : AsyncTask<Void?, Void?, String>() {
                 override fun doInBackground(vararg params: Void?): String {
                     try {
