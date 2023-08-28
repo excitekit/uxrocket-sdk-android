@@ -21,7 +21,7 @@ class App : Application() {
             authKey = "2JIJ67L7CS",
             appRocketId = "test_android_sdk_uxrocket",
             serverEnvironment = UXRocketServer.develop(),
-            true
+            false
         )
 
         UXRocket.setCountryAndCity("Armenia", "Yerevan")

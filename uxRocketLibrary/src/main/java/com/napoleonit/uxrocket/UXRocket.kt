@@ -341,8 +341,7 @@ object UXRocket {
         val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)
         val editor = sharedPreferences.edit()
         if(!getAdvertisingId) {
-            metaInfo.setAdvertising(null);
-            editor.putString("GAID", null)
+            editor.clear()
             editor.apply()
             return;
         }
