@@ -95,22 +95,26 @@ object UXRocket {
     }
 
     private fun initTracking(appContext: Context) {
-        val referrerClient = InstallReferrerClient.newBuilder(appContext).build()
-        referrerClient.startConnection(object : InstallReferrerStateListener {
+        try {
+            val referrerClient = InstallReferrerClient.newBuilder(appContext).build()
+            referrerClient.startConnection(object : InstallReferrerStateListener {
 
-            override fun onInstallReferrerSetupFinished(responseCode: Int) {
-                when (responseCode) {
-                    InstallReferrerClient.InstallReferrerResponse.OK -> {
-                        val response: ReferrerDetails = referrerClient.installReferrer
-                        setReferrer(response)
-                        referrerClient.endConnection()
+                override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                    when (responseCode) {
+                        InstallReferrerClient.InstallReferrerResponse.OK -> {
+                            val response: ReferrerDetails = referrerClient.installReferrer
+                            setReferrer(response)
+                            referrerClient.endConnection()
+                        }
                     }
                 }
-            }
 
-            override fun onInstallReferrerServiceDisconnected() {
-            }
-        })
+                override fun onInstallReferrerServiceDisconnected() {
+                }
+            })
+        } catch (e: Exception) {
+            e.logError()
+        }
     }
 
     /**
