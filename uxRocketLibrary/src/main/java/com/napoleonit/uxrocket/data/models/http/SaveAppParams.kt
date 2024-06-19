@@ -37,7 +37,8 @@ data class SaveRawAppDataRequestModel(
     @SerialName("advertising_id") val advertisingId: String?  = null,
     @SerialName("time_zone_shift") val timeZoneShift: Double?  = null,
     @SerialName("time_zone_name") val timeZoneName: String?  = null,
-) {
+    @SerialName("manufacturer") val manufacturer: String?  = null,
+    ) {
     companion object {
         fun bindRequestModel(
             model: LogModel,
@@ -55,6 +56,7 @@ data class SaveRawAppDataRequestModel(
             deviceType = metaInfo.deviceType,
             city = metaInfo.city,
             timeZoneName = metaInfo.timeZoneName,
+            manufacturer = metaInfo.manufacturer,
             timeZoneShift = metaInfo.timeZoneShift,
             referrer = metaInfo.referrer,
             advertisingId = metaInfo.advertisingId,

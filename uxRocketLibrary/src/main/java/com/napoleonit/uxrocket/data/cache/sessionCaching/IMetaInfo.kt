@@ -7,6 +7,7 @@ interface IMetaInfo {
     val osName: String
     val deviceID: String
     val osVersion: String
+    val manufacturer: String
     val deviceLocale: String
     val operatorName: String?
     val appVersionName: String

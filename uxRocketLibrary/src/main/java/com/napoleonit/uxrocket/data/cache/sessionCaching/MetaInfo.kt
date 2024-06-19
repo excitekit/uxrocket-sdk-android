@@ -25,6 +25,7 @@ class MetaInfo(
     override val resolution: String = getScreenResolution(appContext)
     override val deviceID: String = getDeviceId(appContext)
     override val osVersion: String = getOSVersion()
+    override val manufacturer: String = getManufacturer()
     override val deviceLocale: String = getLocale()
     override val appPackageName: String = getPackageName(appContext)
     override val appVersionName: String = getAppVersionName(appContext)
@@ -70,7 +71,11 @@ private fun getDeviceName(): String {
 }
 
 private fun getOSVersion(): String {
-    return Build.VERSION.SDK_INT.toString()
+    return Build.VERSION.RELEASE.toString()
+}
+
+private fun getManufacturer(): String {
+    return Build.MANUFACTURER
 }
 
 private fun getTimeZoneName(): String{
