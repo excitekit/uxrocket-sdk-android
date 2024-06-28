@@ -340,16 +340,18 @@ object UXRocket {
      * Данный метод сохраняет поле AdvertisingId
      */
     private fun setAdvertisingIdWithPrefs(context: Context, getAdvertisingId: Boolean = false) {
-        val sharedPreferences = context.getSharedPreferences("AdvertisingPrefs", Context.MODE_PRIVATE)
-        var gaid = sharedPreferences.getString("GAID", null)
-        val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)
-        val editor = sharedPreferences.edit()
-        if(!getAdvertisingId) {
-            editor.clear()
-            editor.apply()
-            return;
-        }
         try {
+            val sharedPreferences =
+                context.getSharedPreferences("AdvertisingPrefs", Context.MODE_PRIVATE)
+            var gaid = sharedPreferences.getString("GAID", null)
+            val metaInfo: IMetaInfo by inject(IMetaInfo::class.java)
+            val editor = sharedPreferences.edit()
+            if (!getAdvertisingId) {
+                editor.clear()
+                editor.apply()
+                return;
+            }
+
             object : AsyncTask<Void?, Void?, String>() {
                 override fun doInBackground(vararg params: Void?): String {
                     try {
