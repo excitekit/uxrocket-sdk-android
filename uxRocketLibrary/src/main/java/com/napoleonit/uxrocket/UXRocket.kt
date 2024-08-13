@@ -2,6 +2,8 @@ package com.napoleonit.uxrocket
 
 import android.content.Context
 import android.os.AsyncTask
+import android.os.RemoteException
+import android.util.Log
 import android.view.View
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
@@ -100,22 +102,51 @@ object UXRocket {
             referrerClient.startConnection(object : InstallReferrerStateListener {
 
                 override fun onInstallReferrerSetupFinished(responseCode: Int) {
-                    when (responseCode) {
-                        InstallReferrerClient.InstallReferrerResponse.OK -> {
-                            val response: ReferrerDetails = referrerClient.installReferrer
-                            setReferrer(response)
+                    try {
+                        when (responseCode) {
+                            InstallReferrerClient.InstallReferrerResponse.OK -> {
+                                val response: ReferrerDetails = referrerClient.installReferrer
+                                setReferrer(response)
+                            }
+
+                            InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED -> {
+                                Log.e("InstallReferrer", "Feature not supported")
+                                referrerClient.endConnection()
+                            }
+
+                            InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE -> {
+                                // Обработка случая, когда сервис недоступен
+                                Log.e("InstallReferrer", "Service unavailable")
+                                referrerClient.endConnection()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.logError()
+                    } finally {
+                        try {
                             referrerClient.endConnection()
+                        } catch (e: Exception) {
+                            e.logError()
                         }
                     }
                 }
 
                 override fun onInstallReferrerServiceDisconnected() {
+                    // Обработка разрыва соединения
+                    Log.e("InstallReferrer", "Service disconnected")
+                    try {
+                        referrerClient.endConnection()
+                    } catch (e: Exception) {
+                        e.logError()
+                    }
                 }
             })
         } catch (e: Exception) {
             e.logError()
         }
     }
+
+
 
     /**
      * Вызывает метод SaveRawAppData (аналог названия LogEvent)
